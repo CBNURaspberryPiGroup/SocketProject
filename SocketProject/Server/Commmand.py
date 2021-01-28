@@ -2,6 +2,7 @@ from socket import *
 import os
 from os.path import exists
 import sys
+import Send.py
 
 
 
@@ -46,11 +47,12 @@ class Command():
                   
     def file_pull(self):
         fileExtension = os.path.splitext(self.split_f[1])[1]
+        print(fileExtension)
         
-        if fileExtension == '.txt':
-            self.SendData.send_txt(self.split_f[1])
-        elif fileExtension == '.png':
-            self.SendData.send_img(self.split_f[1]) 
+        
+        
+        
+        
             
             
             
@@ -58,5 +60,9 @@ class Command():
               
     def file_push(self):
         filename, fileExtension = os.path.splitext(self.split_f[1])
-        print(filename, fileExtension)
+        
+        if fileExtension == '.txt':
+            self.SendData.send_txt(self.split_f[1])
+        elif fileExtension == '.png':
+            self.SendData.send_img(self.split_f[1]) 
       
