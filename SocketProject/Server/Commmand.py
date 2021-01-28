@@ -4,53 +4,59 @@ from os.path import exists
 import sys
 
 
-# serverSock = socket(AF_INET, SOCK_STREAM)
-# serverSock.bind(('', 9966))
-# serverSock.listen(1)
-# print('listening....')
-# connectionSock, addr = serverSock.accept()
+
 
 
 class Command():
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self,client,SendData):
+        self.client = client
+        self.SendData = SendData
         
-        # filename = connectionSock.recv(1024)
-        filename = 'pull wlans.txt'
+        filename = self.clinet.recv(1024)
+        
         self.filename = filename
         self.split()
         
     def split(self):
-        split_f = self.filename.split(' ')  
+        self.split_f = self.filename.split(' ')  
         
-        if split_f[0] == 'push':
-            if not exists(split_f[1]):
-                err = ('Error -'+split_f[1]+'- 존재하지 않는 파일 입니다') 
-                # connectionSock.sendall(err.encode('utf-8'))
-                # Command()
+        if self.split_f[0] == 'push':
+            if not exists(self.split_f[1]):
+                err = ('Error -'+self.split_f[1]+'- 존재하지 않는 파일 입니다') 
+                self.client.sendall(err.encode('utf-8'))
+                
                 print(err)
             else:    
                 self.file_push()
             
-        elif split_f[0] == 'pull':
-            if not exists(split_f[1]):
-                err = ('Error -'+split_f[1]+'- 존재하지 않는 파일 입니다') 
-                # connectionSock.sendall(err.encode('utf-8'))
-                # Command() 
+        elif self.split_f[0] == 'pull':
+            if not exists(self.split_f[1]):
+                err = ('Error -'+self.split_f[1]+'- 존재하지 않는 파일 입니다') 
+                self.clinet.sendall(err.encode('utf-8'))
+                
                 print(err)
             else:    
                 self.file_pull()
         
         else:
-            err = ('Error -'+split_f[0]+'- 존재하지 않는 명령어 입니다')
+            err = ('Error -'+self.split_f[0]+'- 존재하지 않는 명령어 입니다')
             print(err) 
-            # connectionSock.sendall(err.encode('utf-8'))
+            self.clinet.sendall(err.encode('utf-8'))
                   
     def file_pull(self):
-        print('pull')
+        fileExtension = os.path.splitext(self.split_f[1])[1]
+        
+        if fileExtension == '.txt':
+            self.SendData.send_txt(self.split_f[1])
+        elif fileExtension == '.png':
+            self.SendData.send_img(self.split_f[1]) 
+            
+            
+            
+
               
     def file_push(self):
-        print('push')
-            
-Command()       
+        filename, fileExtension = os.path.splitext(self.split_f[1])
+        print(filename, fileExtension)
+      
