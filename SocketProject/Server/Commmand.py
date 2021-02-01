@@ -5,13 +5,13 @@ import sys
 import Send
 
 
-sed =Send.SendData()
+
 
 
 class Command():
     
-    def __init__(self,client,sed):
-        self.client = client
+    def __init__(self,client,SendData):
+        self.SendData = SendData
         self.sed = sed
         
         filename = self.clinet.recv(1024)
@@ -62,10 +62,9 @@ class Command():
         filename, fileExtension = os.path.splitext(self.split_f[1])
         
         if fileExtension == '.txt':
-            self.sed.send_txt(self.split_f[1])
+            self.SendData.send_txt(self.split_f[1])
         elif fileExtension == '.png':
-            self.sed.send_img(self.split_f[1]) 
-      
+            self.SendData.send_img(self.split_f[1]) 
 
         
         
