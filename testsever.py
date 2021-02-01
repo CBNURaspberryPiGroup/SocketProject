@@ -3,6 +3,10 @@ import Commmand
 import work
 import Send
 
+wrk = work.filelist()
+Com = Commmand.Command()
+sed = Send.SendData()
+
 Host = ''
 Port = 9966
 
@@ -14,12 +18,15 @@ server_socket.bind((Host,Port))
 print("listening...")
 server_socket.listen()
 print("listened")
-client_socket, addr = server_socket.accept()
+client, addr = server_socket.accept()
 
 print('Connected by '+str(addr))
 
-filelist.fileinf()
-Command()
 
-client_socket.close()
+
+wrk()
+print('고민성 ㅋ')
+Com.split()
+
+client.close()
 server_socket.close()
