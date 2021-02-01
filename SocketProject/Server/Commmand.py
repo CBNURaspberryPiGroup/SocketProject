@@ -2,22 +2,22 @@ from socket import *
 import os
 from os.path import exists
 import sys
-import Send.py
+import Send
 
 
-
+sed =Send.SendData()
 
 
 class Command():
     
-    def __init__(self,client,SendData):
+    def __init__(self,client,sed):
         self.client = client
-        self.SendData = SendData
+        self.sed = sed
         
         filename = self.clinet.recv(1024)
         
         self.filename = filename
-        self.split()
+        
         
     def split(self):
         self.split_f = self.filename.split(' ')  
@@ -48,6 +48,25 @@ class Command():
     def file_pull(self):
         fileExtension = os.path.splitext(self.split_f[1])[1]
         print(fileExtension)
+        
+        
+        
+        
+        
+            
+            
+            
+
+              
+    def file_push(self):
+        filename, fileExtension = os.path.splitext(self.split_f[1])
+        
+        if fileExtension == '.txt':
+            self.sed.send_txt(self.split_f[1])
+        elif fileExtension == '.png':
+            self.sed.send_img(self.split_f[1]) 
+      
+
         
         
         
