@@ -1,9 +1,9 @@
 import socket
-import Command.py
-import work.py
-import Send.py
+import Commmand
+import work
+import Send
 
-Host = '172.30.1.35'
+Host = ''
 Port = 9966
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
