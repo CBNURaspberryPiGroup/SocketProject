@@ -1,6 +1,6 @@
 import os
-class filelist () :
-    def __init__(self) :
+class filelist() :
+    def __init__(self,client) :
         files = os.listdir()
         curfiles = os.listdir(os.curdir) 
 
@@ -8,6 +8,7 @@ class filelist () :
         print('\n')
         print(curfiles)
         print('\n')
+        client.sendall(files.encode())
    
     def fileinf(self) :
         if os.path.isfile() :
@@ -22,3 +23,4 @@ class filelist () :
         last_modification = os.path.getmtime()
         size = os.path.getsize()
         print(last_acc, last_modification, size)
+        print('hi')
