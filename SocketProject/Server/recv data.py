@@ -5,24 +5,31 @@ class RecvData:
     def __init__(self,client,storage):
         self.client = client
         self.stroage = storage
- 
+
     def recv_img(self,fn):
-        matadata= self.client.recv()
-        matadata= matadata.split
+        try:
+            matadata= self.client.recv()
+            matadata=matadata.split()
+            matadata= matadata.split(",")
+            img_size="int(matadata[1][1:]), int(matadata[2][1:])"
         
-        if len(matadata[1])==7 :
-            matadata[1]=int(matadata[1][0:3]),int(matadata[1][4:])
-             
-        elif len(matadata[1])==8:
-            if matadata[1]==",":
-                matadata[1]=int(matadata[1][0:3]),int(matadata[1][4:])
+            img_mode=matadata[3]
+        
+            img_data=""
+            data = self.client.recv(1024) 
+            while len(data)==1024 :
+                img_data+=data
+                data=self.client.recv(1024)
+            data=self.cliemt.recv(1024)
+            img_data+=data
 
-            elif matadata[1][4]==",":
-                matadata[1]=int(matadata[1][0:5]),int(matadata[1][5:])
+            data = Image.frombytes(img_size,img_mode,img_data) #(size,mode,data)
+            data.save("cliet.stroage+fn")
 
-        elif len(matadata[1])==9:
-            matadata[1]=int(matadata[1][0:4]),int(matadata[1][5:])
+        except Exception as e:
+            print(e)
+            self.client.send(e)
 
-        data=self.client.recv(1024)    
-        data = Image.frombytes(matadata[1],matadata[3],data)
-        Image.save(storage)
+    def recv_txt(self,fn)
+         try:
+            f=open("cliet.stroage+fn",'w')
