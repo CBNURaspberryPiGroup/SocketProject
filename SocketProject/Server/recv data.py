@@ -10,8 +10,8 @@ class RecvData:
         try:
             matadata= self.client.recv()
             matadata=matadata.split()
-            matadata= matadata.split(",")
-            img_size="int(matadata[1][1:]), int(matadata[2][1:])"
+            img_size= matadata[1].split(",")
+            img_size="int(img_size[1][1:]), int(img_size[2][1:])"
         
             img_mode=matadata[3]
         
