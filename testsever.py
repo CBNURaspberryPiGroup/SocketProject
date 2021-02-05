@@ -21,11 +21,11 @@ client, addr = server_socket.accept()
 
 print('Connected by '+str(addr))
 
-wok=work.filelist()
+wok=work.filelist(client,storage)
 wok.list_f()
 
 print('고민성 ㅋ')
-Com = Commmand.Commmand()
+Com = Commmand.Commmand(client,storage)
 Com.split()
 
 
