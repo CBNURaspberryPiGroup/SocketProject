@@ -1,16 +1,33 @@
 import socket
+import Commmand
+import work
+import Send
 
-Host = "192.168.0.112"
-#Host = "192.168.0.15"
+
+Host = ''
 Port = 9966
 
-client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+storage = "./*"
 
-client_socket.connect((Host,Port))
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-client_socket.sendall('Hello'.encode())
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-data = client_socket.recv(1024)
-print('Received',repr(data.decode()))
+server_socket.bind((Host,Port))
+print("listening...")
+server_socket.listen()
+print("listened")
+client, addr = server_socket.accept()
 
-client_socket.close()
+print('Connected by '+str(addr))
+
+wok=work.filelist(client,storage)
+wok.list_f()
+
+print('고민성 ㅋ')
+Com = Commmand.Commmand(client,storage)
+Com.split()
+
+
+client.close()
+server_socket.close()
