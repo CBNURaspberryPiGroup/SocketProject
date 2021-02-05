@@ -32,10 +32,10 @@ class RecvData:
 
     def recv_txt(self,fn):
         f=open("%s%s"%(self.stroage,fn),'w') 
-        data=""
+        data=self.client.recv(1024)
         while not data=='\0'.encode():
-            data=self.client.recv(1024)
             f.write(data.decode())
+            data=self.client.recv(1024)
             
             
         
