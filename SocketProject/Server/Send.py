@@ -17,6 +17,7 @@ class SendData:
             size = 0
             for dat in data:
                 size += self.send(dat)
+            self.send('\0'.encode())
             return size
         except Exception as e:
             print(e)
