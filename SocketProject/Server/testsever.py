@@ -25,6 +25,7 @@ wok=work.filelist(client,storage)
 wok.list_f()
 
 print('고민성 ㅋ')
+
 Com = Commmand.Command(client)
 Com.split()
 
