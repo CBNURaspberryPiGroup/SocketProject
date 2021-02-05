@@ -17,7 +17,7 @@ server_socket.bind((Host,Port))
 print("listening...")
 server_socket.listen()
 print("listened")
-client_socket, addr = server_socket.accept()
+client, addr = server_socket.accept()
 
 print('Connected by '+str(addr))
 
@@ -29,5 +29,5 @@ Com = Commmand()
 Com.split()
 
 
-client_socket.close()
+client.close()
 server_socket.close()
