@@ -27,7 +27,7 @@ class SendData:
     def send_img(self,fn):
         try:
             data = Image.open(self.storage+"/"+fn)
-            metadata = "Size|%s|Mode|%s"%(data.size,data.mode)
+            metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
             data = data.tobytes()
             self.send(metadata.encode())
             size = 0
