@@ -13,7 +13,7 @@ class Command():
     def __init__(self,client):
         
         
-        
+        self.client = client
         filename = self.client.recv(1024)
         
         self.filename = filename
