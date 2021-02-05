@@ -8,7 +8,7 @@ class RecvData:
 
     def recv_img(self,fn):
         try:
-            matadata= self.client.recv()
+            matadata= self.client.recv(1024).decode()
             matadata= matadata.split("|")
             img_size= matadata[1].split(",")
             size="%i,%i" %(img_size[1][1:],img_size[2][1:])
@@ -18,10 +18,10 @@ class RecvData:
             img_data=""
             data = self.client.recv(1024) 
             while len(data)==1024 : 
-                img_data+=data
+                img_data+=data.decode
                 data=self.client.recv(1024)
             data=self.client.recv(1024)
-            img_data+=data
+            img_data+=data.decode()
 
             data = Image.frombytes(size,img_mode,img_data) #(size,mode,data)
             data.save("%s+%s"%(self.stroage,fn)) 
@@ -36,3 +36,6 @@ class RecvData:
         while not data=='\0'.encode():
             data=self.client.recv(1024)
             f.write(data.decode())
+            
+            
+        
