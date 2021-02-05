@@ -41,6 +41,7 @@ class SendData:
                     print('data N0.%s'%i)
                     print(size)
             self.send('\0'.encode())
+            print('End')
             return size
         except Exception as e:
             print(e)
