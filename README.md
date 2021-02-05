@@ -1,5 +1,6 @@
 # CBNU Raspberry Pi Group Repository
 
+> **&laquo;본인 행적 좀 적어주새오...&raquo;**
 
 
 ## Socket Project (2020/12~)
@@ -12,6 +13,7 @@
   * 이정호
     * 2021.01.25: Send.py 추가
     * 2021.01.25: 폴더 정리
+    * 2021.02.05: Identification.py 추가
   * 황지현
   * 고민성
     
