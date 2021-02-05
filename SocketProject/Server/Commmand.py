@@ -14,7 +14,7 @@ class Command():
         
         
         
-        filename = self.clinet.recv(1024)
+        filename = self.client.recv(1024)
         
         self.filename = filename
         
