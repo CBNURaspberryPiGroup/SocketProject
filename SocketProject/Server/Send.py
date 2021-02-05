@@ -35,9 +35,10 @@ class SendData:
                 print(i)
                 if (i+1)*1024-(i*1024) < 1024 :
                     size += self.send(data[i*1024:])
-                    print('data N0.%s'%i)
+                    print('Last data N0.%s'%i)
                 else :
                     size += self.send(data[i*1024:(i+1)*1024])
+                    print('data N0.%s'%i)
             return size
         except Exception as e:
             print(e)
