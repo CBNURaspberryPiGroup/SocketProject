@@ -30,7 +30,7 @@ class SendData:
             metadata = "Size|%s|Mode|%s"%(data.size,data.mode)
             print(metadata)
             data = data.tobytes()
-            self.send(metadata)
+            self.send(metadata.encode())
             size = 0
             for i in range((len(data)-1)//1024+1):
                 if (i+1)*1024-(i*1024) < 1024 :
