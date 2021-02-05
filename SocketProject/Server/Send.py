@@ -27,16 +27,15 @@ class SendData:
     def send_img(self,fn):
         try:
             data = Image.open(self.storage+"/"+fn)
-            print(self.storage+"/"+fn)
-            #print(data)
             metadata = "Size|%s|Mode|%s"%(data.size,data.mode)
-            print(metadata)
             data = data.tobytes()
             self.send(metadata.encode())
             size = 0
             for i in range((len(data)-1)//1024+1):
+                print(i)
                 if (i+1)*1024-(i*1024) < 1024 :
                     size += self.send(data[i*1024:])
+                    print('data N0.%s'%i)
                 else :
                     size += self.send(data[i*1024:(i+1)*1024])
             return size
