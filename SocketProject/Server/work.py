@@ -17,6 +17,7 @@ class filelist() :
         file_list =[]
         file_list.append([file for file in file_list1 if file.endswith(".txt")])
         file_list.append([file for file in file_list1 if file.endswith(".png")])
+        file_list.append([file for file in file_list1 if file.endswith(".jpg")])
 
         print (file_list)
         self.client.sendall(file_list.encode())
