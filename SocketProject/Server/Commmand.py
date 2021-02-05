@@ -14,13 +14,13 @@ class Command():
         
         
         self.client = client
-        filename = self.client.recv(1024)
-        
-        self.filename = filename
+       
         
         
     def split(self):
-        self.split_f = self.filename.split(' ')  
+        filename = self.client.recv(1024)
+        filename = filename.decode()
+        self.split_f = filename.split(' ')  
         
         if self.split_f[0] == 'push':
             if not exists(self.split_f[1]):
