@@ -26,7 +26,7 @@ wok.list_f()
 
 print('고민성 ㅋ')
 
-Com = Commmand.Command(client)
+Com = Commmand.Command(client,storage)
 Com.split()
 
 
