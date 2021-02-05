@@ -16,4 +16,5 @@
     * 2021.02.05: Identification.py 추가
   * 황지현
   * 고민성
+    *recv.py 수정
     
