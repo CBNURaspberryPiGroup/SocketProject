@@ -10,9 +10,9 @@ import Send
 
 class Command():
     
-    def __init__(self,client):
+    def __init__(self,client,storage):
         
-        
+        self.storage = storage
         self.client = client
        
         
@@ -60,7 +60,7 @@ class Command():
               
     def file_pull(self):
         filename, fileExtension = os.path.splitext(self.split_f[1])
-        
+        sed=Send.SendData(self.client,self.storage)
         if fileExtension == '.txt':
             Send.SendData.send_txt(self.split_f[1])
         elif fileExtension == '.png':
