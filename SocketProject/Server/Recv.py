@@ -11,7 +11,7 @@ class RecvData:
             matadata= self.client.recv()
             matadata= matadata.split("|")
             img_size= matadata[1].split(",")
-            size="%i,%i" %img_size[1][1:] %img_size[2][1:]
+            size="%i,%i" %(img_size[1][1:],img_size[2][1:])
         
             img_mode=matadata[3]
         
@@ -24,16 +24,15 @@ class RecvData:
             img_data+=data
 
             data = Image.frombytes(size,img_mode,img_data) #(size,mode,data)
-            data.save("%s+%s") % self.stroage %fn
+            data.save("%s+%s"%(self.stroage,fn)) 
 
         except Exception as e:
             print(e)
             self.client.send(e)
 
     def recv_txt(self,fn):
-        f=open("%s+%s",'w') %self.stroage %fn
+        f=open("%s%s"%(self.stroage,fn),'w') 
         data=""
         while not data=='\0'.encode():
-            data=self.client.recv
-            f.write(data)
-            
+            data=self.client.recv(1024)
+            f.write(data.decode())
