@@ -6,14 +6,6 @@ class RecvData:
         self.client = client
         self.stroage = storage
 
-    import socket
-from PIL import Image
-
-class RecvData:
-    def __init__(self,client,storage):
-        self.client = client
-        self.stroage = storage
-
     def recv_img(self,fn):
         try:
             matadata= self.client.recv()
@@ -38,15 +30,10 @@ class RecvData:
             print(e)
             self.client.send(e)
 
-
-    def recv_txt(self,fn)
-         try:
-            f=open(%s+%s,'w') %client.stroage %fn
-            while True:
-            data=self.client.recv()
+    def recv_txt(self,fn):
+        f=open("%s+%s",'w') %self.stroage %fn
+        data=""
+        while not data=='\0'.encode():
+            data=self.client.recv
             f.write(data)
             
-            except Exception as e:
-            print(e)
-            self.send(e)
-
