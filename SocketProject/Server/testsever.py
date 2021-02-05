@@ -7,7 +7,7 @@ import Send
 Host = ''
 Port = 9966
 
-storage = "./*"
+storage = "./"
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
