@@ -16,12 +16,12 @@ class SendData:
             
             size = 0
             for dat in data:
-                size += self.send(dat)
+                size += self.send(dat.encode())
             self.send('\0'.encode())
             return size
         except Exception as e:
-            print(e)
-            self.send(e)
+            print(e.encode())
+            self.send(e.encode())
 
     def send_img(self,fn):
         try:
@@ -37,5 +37,5 @@ class SendData:
                     size += self.send(data[i*1024:(i+1)*1024])
             return size
         except Exception as e:
-            print(e)
-            self.send(e)
+            print(e.encode())
+            self.send(e.encode())
