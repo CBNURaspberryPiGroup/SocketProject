@@ -20,11 +20,11 @@ class RecvData:
             while len(data)==1024 : 
                 img_data+=data
                 data=self.client.recv(1024)
-            data=self.cliemt.recv(1024)
+            data=self.client.recv(1024)
             img_data+=data
 
             data = Image.frombytes(size,img_mode,img_data) #(size,mode,data)
-            data.save("%s/+fn") % self.stroage
+            data.save(%s+%s) % self.stroage %fn
 
         except Exception as e:
             print(e)
@@ -32,7 +32,7 @@ class RecvData:
 
     def recv_txt(self,fn)
          try:
-            f=open("cliet.stroage+fn",'w')
+            f=open(%s+%s,'w') %client.stroage %fn
             while True:
             data=self.client.recv()
             f.write(data)
