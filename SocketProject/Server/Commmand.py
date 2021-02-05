@@ -10,9 +10,9 @@ import Send
 
 class Command():
     
-    def __init__(self,client,SendData):
-        self.SendData = SendData
-        self.sed = sed
+    def __init__(self,client):
+        
+        
         
         filename = self.clinet.recv(1024)
         
@@ -45,7 +45,7 @@ class Command():
             print(err) 
             self.clinet.sendall(err.encode('utf-8'))
                   
-    def file_pull(self):
+    def file_push(self):
         fileExtension = os.path.splitext(self.split_f[1])[1]
         print(fileExtension)
         
@@ -58,13 +58,13 @@ class Command():
             
 
               
-    def file_push(self):
+    def file_pull(self):
         filename, fileExtension = os.path.splitext(self.split_f[1])
         
         if fileExtension == '.txt':
-            self.SendData.send_txt(self.split_f[1])
+            Send.SendData.send_txt(self.split_f[1])
         elif fileExtension == '.png':
-            self.SendData.send_img(self.split_f[1]) 
+            Send.SendData.send_img(self.split_f[1]) 
 
         
         
@@ -75,12 +75,4 @@ class Command():
             
             
 
-              
-    def file_push(self):
-        filename, fileExtension = os.path.splitext(self.split_f[1])
-        
-        if fileExtension == '.txt':
-            self.SendData.send_txt(self.split_f[1])
-        elif fileExtension == '.png':
-            self.SendData.send_img(self.split_f[1]) 
       
