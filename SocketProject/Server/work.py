@@ -20,4 +20,4 @@ class filelist() :
         file_list.append([file for file in file_list1 if file.endswith(".jpg")])
 
         print (file_list)
-        self.client.sendall(file_list.encode())
+        self.client.sendall(str(file_list).encode())
