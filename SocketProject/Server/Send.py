@@ -39,6 +39,7 @@ class SendData:
                 else :
                     size += self.send(data[i*1024:(i+1)*1024])
                     print('data N0.%s'%i)
+                    print(size)
             return size
         except Exception as e:
             print(e)
