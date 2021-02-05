@@ -1,26 +1,22 @@
 import os
+import socket
+
+
+
+
 class filelist() :
-    def __init__(self,client) :
-        files = os.listdir()
-        curfiles = os.listdir(os.curdir) 
+    def __init__(self,client,storage) :
+        self.storage =storage
+        self.client = client
+        
 
-        print(files)
-        print('\n')
-        print(curfiles)
-        print('\n')
-        client.sendall(files.encode())
-   
-    def fileinf(self) :
-        if os.path.isfile() :
-            print('plain file')
+    def list_f(self):
+        file_list1 = os.listdir(self.storage)
+        
+        
+        file_list =[]
+        file_list.append([file for file in file_list1 if file.endswith(".txt")])
+        file_list.append([file for file in file_list1 if file.endswith(".png")])
 
-        elif os.path.dir() :
-            print('directory')
-
-        else : print('nothing')
-
-        last_acc = os.path.getatime()
-        last_modification = os.path.getmtime()
-        size = os.path.getsize()
-        print(last_acc, last_modification, size)
-        print('hi')
+        print (file_list)
+        self.client.sendall(file_list.encode())
