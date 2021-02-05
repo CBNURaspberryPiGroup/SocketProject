@@ -60,6 +60,9 @@ class Command():
               
     def file_pull(self):
         filename, fileExtension = os.path.splitext(self.split_f[1])
+        err = (self.split_f[1] + '파일 받기 시작')
+            print(err) 
+            self.client_socket.sendall(err.encode('utf-8'))
         sed=Send.SendData(self.client,self.storage)
         if fileExtension == '.txt':
             Send.SendData.send_txt(self.split_f[1])
