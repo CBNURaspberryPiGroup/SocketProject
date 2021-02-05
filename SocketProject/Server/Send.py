@@ -21,7 +21,7 @@ class SendData:
             return size
         except Exception as e:
             print(e.encode())
-            self.send(e.encode())
+            self.send(repr(e).encode())
 
     def send_img(self,fn):
         try:
@@ -38,4 +38,4 @@ class SendData:
             return size
         except Exception as e:
             print(e.encode())
-            self.send(e.encode())
+            self.send(repr(e).encode())
