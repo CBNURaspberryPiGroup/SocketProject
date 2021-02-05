@@ -6,8 +6,8 @@ class SendData:
         self.client = client
         self.storage = storage
         
-    def send(self,size=1024):
-        return self.client.sendall(size)
+    def send(self,data,size=1024):
+        return self.client.sendall(data,size)
 
     def send_txt(self,fn):
         try: 
