@@ -8,34 +8,47 @@ class RecvData:
 
     def recv_img(self,fn):
         try:
-            matadata= self.client.recv(1024).decode()
-            matadata= matadata.split("|")
-            img_size= matadata[1].split(",")
-            size="%i,%i" %(img_size[1][1:],img_size[2][1:])
-        
+            matadata= client.recv(1024)
+            matadata=matadata.decode()
+            matadata= matadata.split(":")
+            img_size= matadata[1].split(",")  
+            size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
             img_mode=matadata[3]
-        
-            img_data=""
-            data = self.client.recv(1024) 
-            while len(data)==1024 : 
-                img_data+=data.decode
-                data=self.client.recv(1024)
-            data=self.client.recv(1024)
-            img_data+=data.decode()
 
-            data = Image.frombytes(size,img_mode,img_data) #(size,mode,data)
-            data.save("%s+%s"%(self.stroage,fn)) 
+            if  fileExtension == '.png':
+                data_len=int(img_size[0][1:])*int(img_size[1][1:-1])*4
+                a=ceil(data_len/1024)
+                img_data=b""
+                for i in range(1:a+1):
+                    data = client.recv(1024)
+                    img_data+=data
+                data = Image.frombytes(img_mode,size,img_data) 
+                data.save("%s%s"%(storage,split_f[1]))
+             
+            
+            elif  fileExtension == '.jpg':
+                data_len=int(img_size[0][1:])*int(img_size[1][1:-1])*3
+                a=ceil(data_len/1024)
+                img_data=b""
+                for i in range(1:a+1):
+                    data = client.recv(1024)
+                    img_data+=data
+                data = Image.frombytes(img_mode,size,img_data) 
+                data.save("%s%s"%(storage,split_f[1])) 
 
         except Exception as e:
             print(e)
             self.client.send(e)
 
     def recv_txt(self,fn):
-        f=open("%s%s"%(self.stroage,fn),'w') 
-        data=self.client.recv(1024)
-        while not data=='\0'.encode():
-            f.write(data.decode())
-            data=self.client.recv(1024)
+        f=open("%s%s"%(storage,split_f[1]),'w')
+         while True :
+            data=client.recv(1024)
+            if '\0'.decode() in data:
+                f.write(data.decode()[0:-1])
+                break
+            else :
+                f.write(data.decode())
             
             
         
