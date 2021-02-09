@@ -27,6 +27,9 @@ class SendData:
     def send_img(self,fn):
         try:
             data = Image.open(self.storage+"/"+fn)
+            if '.jpg' in fn[-4:] : modeConv = 'RGB'
+            else '.png' in fn[-4:] : modeConv = 'RGBA'
+            data = data.convert(mode=modeConv)
             metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
             data = data.tobytes()
             self.send(metadata.encode())
