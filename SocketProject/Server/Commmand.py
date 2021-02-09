@@ -3,6 +3,7 @@ import os
 from os.path import exists
 import sys
 import Send
+import Recv
 
 
 
@@ -46,8 +47,15 @@ class Command():
             self.client.sendall(err.encode('utf-8'))
                   
     def file_push(self):
-        fileExtension = os.path.splitext(self.split_f[1])[1]
-        print(fileExtension)
+        filename, fileExtension = os.path.splitext(self.split_f[1])
+        err = (self.split_f[1] + '파일 받기 시작')
+        print(err) 
+        self.client.sendall(err.encode('utf-8'))
+        Rec=Recv.RecvData(self.client,self.storage)
+        if fileExtension == '.txt':
+            Rec.recv_txt(self.split_f[1])
+        elif fileExtension == '.png'or'.jpg':
+            Rec.recv_img(self.split_f[1]) 
         
         
         
@@ -67,15 +75,4 @@ class Command():
         if fileExtension == '.txt':
             sed.send_txt(self.split_f[1])
         elif fileExtension == '.png'or'.jpg':
-            sed.send_img(self.split_f[1]) 
-
-        
-        
-        
-        
-        
-            
-            
-            
-
-      
+            sed.send_img(self.split_f[1])
