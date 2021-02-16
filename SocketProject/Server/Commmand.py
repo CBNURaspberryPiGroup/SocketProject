@@ -20,6 +20,7 @@ class Command():
         
     def split(self):
         filename = self.client.recv(1024)
+        print(filename)
         filename = filename.decode().replace("\0","")
         print(filename)
         self.split_f = filename.split(' ')  
