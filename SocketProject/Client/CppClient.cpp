@@ -6,7 +6,9 @@
 #include <fstream>
 #include <vector>
 #include <filesystem>
+#include <opencv2/imgcodecs.hpp>
 using namespace std;
+using namespace cv;
 namespace fs = std::__fs::filesystem;
 
 //Socket Class
@@ -67,7 +69,7 @@ int sendTxt(Socket server, fs::path storage, string fn){
             getline(ReadFile,tmp);
             char* msg = convChar(tmp);
             
-            write(server.sock,msg,sizeof(tmp));
+            write(server.sock,msg,strlen(msg));
             trSize += sizeof(tmp);
         }
         ReadFile.close();
@@ -75,10 +77,9 @@ int sendTxt(Socket server, fs::path storage, string fn){
     return trSize;
 }
 
-int recvTxt(Socket server, fs::path storage, string fn){
+void recvTxt(Socket server, fs::path storage, string fn){
     ofstream WriteFile;
     WriteFile.open(storage.string()+fn);
-    int trSize = 0;
     
     if (WriteFile.is_open()){
         char msg[] = {};
@@ -95,7 +96,51 @@ int recvTxt(Socket server, fs::path storage, string fn){
         }
     }
     WriteFile.close();
-    return trSize;
+    cout << "File Transmitted" << endl;
+}
+
+void recvImg(Socket server, fs::path storage, string fn, string mode, int flag){
+    //ofstream WriteFile;
+    //WriteFile.open(storage.string()+fn);
+    cout << "Image" << endl;
+    char msg[] = {};
+    recv(server.sock,msg,1024,0);
+    char metadata[] = {};
+    recv(server.sock,metadata,1024,0);
+    cout << metadata << endl;
+    
+    char* sizeX = strtok(strchr(metadata,'(')+1,",");
+    char* sizeY = strtok(NULL,")")+1;
+    int digit = 1;
+    int X = 0;
+    for (int i = (int)strlen(sizeX)-1; i>=0; i--) {
+        X += ((int)sizeX[i]-48)*digit;
+        digit *= 10;
+    }
+    digit = 1;
+    int Y = 0;
+    for (int i = (int)strlen(sizeY)-1; i>=0; i--) {
+        Y += ((int)sizeY[i]-48)*digit;
+        digit *= 10;
+    }
+    char totalData[X*Y*mode.length()+1024];
+    cout << X*Y*mode.length() << endl;
+    
+    int i = 0;
+    while(true){
+        char data[1024] = {};
+        ssize_t recvLen = recv(server.sock,data,1024,0);
+        if (recvLen < 1){
+            break;
+        }
+        strcat(totalData,data);
+        cout << recvLen << endl;
+        cout << sizeof(totalData) << endl;
+        i++;
+    }
+    //WriteFile.close();
+    cout << strlen(totalData) << endl;
+    cout << i << "File Transmitted" << endl;
 }
 
 void readMsg(Socket server){
@@ -121,16 +166,23 @@ int main(int argc, const char * argv[]) {
         cout << ">> ";
         string cmd;
         getline(cin,cmd);
-        cout << convChar(cmd) << endl;
         
         char* ex = strtok(convChar(cmd)," ");
-        cout << ex << endl;
         if (strcmp(ex,"push")==0){
             break;
         }
         else if(strcmp(ex,"pull")==0){
             send(server.sock,convChar(cmd),strlen(convChar(cmd)),0);
-            cout << recvTxt(server, storage, strtok(NULL," ")) << "Transmitted" << endl;
+            if (cmd.substr(cmd.length()-4,4) == ".txt") {
+                recvTxt(server, storage, strtok(NULL," "));
+            }
+            else if (cmd.substr(cmd.length()-4,4) == ".jpg") {
+                recvImg(server, storage, strtok(NULL," "),"RGB",IMREAD_COLOR);
+            }
+            else if (cmd.substr(cmd.length()-4,4) == ".png"){
+                recvImg(server, storage, strtok(NULL," "),"RGBA",IMREAD_UNCHANGED);
+            }
+            else { cout << "Invalid File" << endl; }
         }
         else if(strcmp(ex,"exit")==0){
             break;
