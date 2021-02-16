@@ -21,6 +21,7 @@ class Command():
     def split(self):
         filename = self.client.recv(1024)
         filename = filename.decode()
+        print(filename)
         self.split_f = filename.split(' ')  
         
         if self.split_f[0] == 'push':
