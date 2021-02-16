@@ -17,31 +17,83 @@ import json
 
 
 # 디렉토리 파일 리스트
+                       
+
+
+class sever_start(QThread):
+    threadEvent = QtCore.pyqtSignal(str)
+     
+    def __init__(self,main):
+        super().__init__()
+        
+        self.main = main
+        self.isRun = False
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.storage = self.main.Storage
+        self.n = ('안뇽')  
+    
+    def run(self):
+        
+        self.main.json_rm() 
+        
+        self.main.client.connect((self.main.Host, int(self.main.Port))) 
+        self.n = ('서버와 연결되었습니다')
+        
+        self.threadEvent.emit(self.n)
+        self.main.btn_push.setEnabled(True)
+        self.main.btn_pull.setEnabled(True)
+        self.main.btn_sever.setEnabled(False)
+        
+        print('ᕙ༼◕ ᴥ ◕༽ᕗ')
+        data = client.recv(1024)
+        for path in data.decode():
+            self.lsitw.addItem(path)
+            
+           
+            
+    def sever_push(self):  #확인
+        filename =('push '+self.main.fn)
+        self.client.sendall(filename.encode('utf-8')) 
+        
+        sev=sever()
+        sev.split(filename)
+        
+    def sever_pull(self):
+        filename =('pull ',self.main.fn)
+        self.client.sendall(filename.encode('utf-8'))
+        
+        sev=sever()
+        sev.split(filename)
+           
+        
 class sever():
     def __intit__(self,sever_start):
-        self.client=client
-        self.storage=storage
+        
         self.sever_start = sever_start
+        
+        
+        
     
 
-    # 명령어 해석
+# 명령어 해석
 
-    def split(self):
+    def split(self,filename):
             split_f = filename.split(' ')  
-            
             if split_f[0] == 'push':
-                data = self.client.recv(1024)
+                print(split_f[0])
+                data = self.sever_start.client.recv(1024)  #문제발생
                 print(data.decode())
                 file_push(split_f)
                 
+                
             elif split_f[0] == 'pull':
-                data = self.client.recv(1024)
+                data = self.sever_start.client.recv(1024)
                 print(data.decode())
                 
                 file_pull(split_f)
-            
+                
             else:
-                data = self.client.recv(1024)
+                data = self.sever_start.client.recv(1024)
                 print(data.decode())
                 
     # 파일 받기
@@ -51,9 +103,9 @@ class sever():
             
         if fileExtension == '.txt':
             try:
-                f=open("%s%s"%(storage,split_f[1]),'w')
+                f=open("%s%s"%(self.sever_start.storage,split_f[1]),'w')
                 while True :
-                    data=self.client.recv(1024)
+                    data=self.sever_start.client.recv(1024)
                     if '\0' in data.decode():
                         f.write(data.decode()[0:-1])
                         print(split_f[1]+ '받기완료')
@@ -67,7 +119,7 @@ class sever():
         elif fileExtension == '.png'or '.jpg':
             try:
                 
-                matadata= self.client.recv(1024)
+                matadata= self.sever_start.client.recv(1024)
                 matadata=matadata.decode()
                 print(matadata)
                 matadata= matadata.split(":")
@@ -76,13 +128,13 @@ class sever():
                 img_mode=matadata[3]
                     
                 img_data=b""
-                data = self.client.recv(1024)
+                data = self.sever_start.client.recv(1024)
                 count=0 
                 start =time.time()
                 while True:
                     count+=1 
                     img_data+=data
-                    data=self.client.recv(1024)
+                    data=self.sever_start.client.recv(1024)
                     if time.time()-start >=10:
                         print(split_f[1]+ ' 받기실패 Timeout(10)')
                         break
@@ -92,7 +144,7 @@ class sever():
 
                 data = Image.frombytes(img_mode,size,img_data) 
                 
-                data.save("%s%s"%(storage,split_f[1])) 
+                data.save("%s%s"%(self.main.storage,split_f[1])) 
                     
 
             except Exception as e:
@@ -109,12 +161,12 @@ class sever():
             self.send_img(split_f)    
         
     def send(self,data,size=1024):
-            client.sendall(data,size)
+            self.sever_start.client.sendall(data,size)
             return len(data)
         
     def send_txt(self,split_f):
             try: 
-                with open(storage+"/"+split_f[1],'r') as f:
+                with open(self.main.storage+"/"+split_f[1],'r') as f:
                     data = f.readlines()
                 
                 size = 0
@@ -128,7 +180,7 @@ class sever():
                 
     def send_img(self,split_f):
             try:
-                data = Image.open(self.storage+"/"+split_f[1])
+                data = Image.open(self.sever_start.storage+"/"+split_f[1])
                 metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
                 data = data.tobytes()
                 self.send(metadata.encode())
@@ -147,42 +199,7 @@ class sever():
                 return size
             except Exception as e:
                 print(e)
-                self.send(repr(e).encode())                       
-
-
-class sever_start(QThread):
-    threadEvent = QtCore.pyqtSignal(str)
-     
-    def __init__(self,main):
-        super().__init__()
-        
-        self.main = main
-        self.isRun = False
-        self.n = ('안뇽')  
-    
-    def run(self):
-        
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect((self.main.Host, int(self.main.Port))) 
-        self.main.json_rm() 
-        self.n = ('서버와 연결되었습니다')
-        
-        self.threadEvent.emit(self.n)
-        self.btn_push.setEnabled(True)
-        self.btn_pull.setEnabled(True)
-        
-        print('ᕙ༼◕ ᴥ ◕༽ᕗ')
-        data = client.recv(1024)
-        for path in data:
-            self.lsitw.addItem(path)
-            
-    def sever_push(self):  #확인
-        filename =self.main.fn
-        
-    def sever_pull(self):
-        filename =self.main.fn    
-        
-        
+                self.send(repr(e).encode())        
               
         
         
@@ -223,7 +240,7 @@ class MainDialog(QDialog):
     def start(self):   #접속버튼
           
         if self.check():
-             
+            self.list_show() 
             self.th = sever_start(self)
             self.th.threadEvent.connect(self.threadEventHandler)
             
@@ -249,7 +266,8 @@ class MainDialog(QDialog):
             Storage = self.line_sto.text()
             
             self.Storage =Storage
-            self.list_show()
+            
+            
             return True
         except Exception as e:
                 print(e)
@@ -259,7 +277,6 @@ class MainDialog(QDialog):
     def push(self):    #업로드 버튼
         try:
             fn = self.listn.currentItem().text()
-            print(fn)
             self.fn =fn
             self.th.sever_push()
         except Exception as e:
@@ -273,12 +290,12 @@ class MainDialog(QDialog):
     def pull(self):   #다운받기 버튼
         try:
             fn = self.listn.currentItem().text()
-            print(fn)
             self.fn =fn
             self.th.sever_pull()
         except Exception as e:
             self.textv.append('다운받을 파일을 선택해주세요')
             print(e)
+            
     
             
     @pyqtSlot()    
@@ -301,6 +318,7 @@ class MainDialog(QDialog):
     #디렉토리 파일 보여주기       
     def list_show(self):   
         file_list1 = os.listdir(self.Storage)
+        self.listn.clear()
         for file in file_list1: 
             if file.endswith(".txt") or file.endswith(".png") or file.endswith(".jpg"):
                 self.listn.addItem(file)
@@ -388,23 +406,7 @@ if __name__ == "__main__":
         
         
         
-        
-## 가동 ##
-
-# client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# client.connect((HOST, PORT))
-# print('서버와 연결되었습니다')
-# print('ᕙ༼◕ ᴥ ◕༽ᕗ')
-# data = client.recv(1024)
-# print('서버에 있는 파일',repr(data.decode()))
-# print('୧༼◕ ᴥ ◕༽୨')
-# list_f()
-# print('ᕙ༼◕ ᴥ ◕༽ᕗ')
-# print('서버에서 파일을 받고 싶으면 pull, 업로드 하고싶을면 push르 입력후 파일명을 입력하십시오')
-# print('୧༼◕ ᴥ ◕༽୨')
-# filename = input('명령어 파일명:')
-# client.sendall(filename.encode('utf-8'))
-# split()        
+      
 
         
            
