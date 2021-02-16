@@ -56,17 +56,46 @@ void fileList(fs::path storage){
     }
 }
 
-void sendTxt(Socket server, fs::path storage, string fn){
+int sendTxt(Socket server, fs::path storage, string fn){
     ifstream ReadFile;
     ReadFile.open(storage.string() + fn);
+    int trSize = 0;
     
     if (ReadFile.is_open()){
-        string tmp;
-        getline(ReadFile,tmp);
-        char* msg = convChar(tmp);
-        
-        write(server.sock,msg,sizeof(tmp));
+        while(!ReadFile.eof()){
+            string tmp;
+            getline(ReadFile,tmp);
+            char* msg = convChar(tmp);
+            
+            write(server.sock,msg,sizeof(tmp));
+            trSize += sizeof(tmp);
+        }
+        ReadFile.close();
     }
+    return trSize;
+}
+
+int recvTxt(Socket server, fs::path storage, string fn){
+    ofstream WriteFile;
+    WriteFile.open(storage.string()+fn);
+    int trSize = 0;
+    
+    if (WriteFile.is_open()){
+        char msg[] = {};
+        recv(server.sock,msg,strlen(convChar(fn))+20,0);
+        cout << msg << endl;
+        while (true){
+            char msg[1024] = {};
+            ssize_t recvLen = recv(server.sock,msg,1024,0);
+            cout << msg << recvLen << endl;
+            if (recvLen > 0){
+                WriteFile.write(msg, strlen(msg));
+            }
+            else {break;}
+        }
+    }
+    WriteFile.close();
+    return trSize;
 }
 
 void readMsg(Socket server){
@@ -87,6 +116,26 @@ int main(int argc, const char * argv[]) {
     cout << "\n Storage File List : " << endl;
     fileList(storage);
     cout << "----------" << endl;
+    
+    while (true){
+        cout << ">> ";
+        string cmd;
+        getline(cin,cmd);
+        cout << convChar(cmd) << endl;
+        
+        char* ex = strtok(convChar(cmd)," ");
+        cout << ex << endl;
+        if (strcmp(ex,"push")==0){
+            break;
+        }
+        else if(strcmp(ex,"pull")==0){
+            send(server.sock,convChar(cmd),strlen(convChar(cmd)),0);
+            cout << recvTxt(server, storage, strtok(NULL," ")) << "Transmitted" << endl;
+        }
+        else if(strcmp(ex,"exit")==0){
+            break;
+        }
+    }
     
     close(server.sock);
     return 0;
