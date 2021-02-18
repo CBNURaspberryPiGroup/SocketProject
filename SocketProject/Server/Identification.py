@@ -58,7 +58,7 @@ class Identification:
             return False
         self.client.sendall('Password:'.encode())
         passwd = self.client.recv(1024)
-        self.client.sendall('Password Confirm:')
+        self.client.sendall('Password Confirm:'.encode())
         if self.client.recv(1024) != passwd:
             self.client.sendall('Password Confirm Failed'.encode())
             return False
