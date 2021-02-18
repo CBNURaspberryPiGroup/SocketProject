@@ -19,10 +19,8 @@ class RecvData:
                 dat=self.client.recv(1024)
                 img_data+=dat
                 data=Image.frombytes(img_mode,size,img_data)
-                result="ok"
             except:
-                result="fail"
-            if result=="ok":
+            else:
                 data.save("%s%s"%(self.storage,fn))
                 break
 
