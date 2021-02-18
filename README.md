@@ -34,13 +34,10 @@
     * 서버,클라이언트 로그인 기능 구현중   
 
 ### 필요모듈
-  * socket
   *  PIL
-  *  os
-  *  sys
-  *  time
   *  PyQt5
   *  Cryptography
+  
 
 ### 작업환경
   * Window
