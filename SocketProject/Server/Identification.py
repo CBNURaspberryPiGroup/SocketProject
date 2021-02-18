@@ -13,7 +13,7 @@ class Identification:
         else:
             with open('Key.key','r') as f:
                 self.__key = f.readlines().encode()
-        self.__crypt = Fernet(self.__key)
+        self.__crypt = fnet(self.__key)
         self.DatabaseOpen()
     
     def DatabaseOpen(self):
@@ -27,6 +27,7 @@ class Identification:
                     self.__Base[f.readlines()] = f.readlines()
             except Exception:
                 pass
+        print("Database Opened")
                 
     def DatabaseWrite(self):
         if exists('Auth.Data'):
@@ -34,6 +35,7 @@ class Identification:
                 for id in self.__Base.keys():
                     f.write(id)
                     f.write(self.__Base[id])
+        print("Database Saved")
         
     def Authentification(self):
         self.client.sendall('ID:'.encode())
