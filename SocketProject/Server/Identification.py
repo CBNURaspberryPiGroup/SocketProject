@@ -24,6 +24,7 @@ class Identification:
             self.__Base = {}
             try:
                 while(True):
+                    if '' in self.__Base : break
                     self.__Base[f.readline().encode()] = f.readline().encode()
             except Exception:
                 pass
