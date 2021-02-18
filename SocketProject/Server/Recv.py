@@ -1,5 +1,6 @@
 import socket
 from PIL import Image
+import time 
 
 class RecvData:
     def __init__(self,client,storage):
@@ -14,20 +15,21 @@ class RecvData:
         size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
         img_mode=matadata[3]
         img_data=b""
+        start=time.time()
         while True:
             try:
                 dat=self.client.recv(1024)
                 img_data+=dat
                 data=Image.frombytes(img_mode,size,img_data)
-                result="ok"
             except:
-                result="fail"
-            if result=="ok":
+            else:
                 data.save("%s%s"%(self.storage,fn))
                 break
-
+        print("소요시간:"+str(time.time()-start))           
+    
     def recv_txt(self,fn):
         f=open("%s%s"%(self.storage,fn),'w')
+        start=time.time()
         while True :
             data=self.client.recv(1024)
             print(data)
@@ -36,7 +38,8 @@ class RecvData:
                 break
             else :
                 f.write(data.decode())
-            print("Line saved")
+        print("소요시간:"+str(time.time()-start))
+            
             
             
         
