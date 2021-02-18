@@ -28,6 +28,7 @@ class Identification:
             except Exception:
                 pass
         print("Database Opened")
+        print(self.__Base)
                 
     def DatabaseWrite(self):
         with open('Auth.Data','w') as f:
@@ -39,7 +40,7 @@ class Identification:
     def Authentification(self):
         self.client.sendall('ID:'.encode())
         id = self.client.recv(1024)
-        if not id in self.__Base:
+        if not( id in self.__Base):
             self.client.sendall('ID Not Found'.encode())
             return False
         self.client.sendall('Password:'.encode())
