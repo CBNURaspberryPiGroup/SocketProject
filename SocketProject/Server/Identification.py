@@ -12,7 +12,7 @@ class Identification:
                 f.write(str(self.__key))
         else:
             with open('Key.key','r') as f:
-                self.__key = f.readlines().encode()
+                self.__key = f.read().encode()
         self.__crypt = fnet(self.__key)
         self.DatabaseOpen()
     
