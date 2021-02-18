@@ -24,8 +24,10 @@ class Identification:
             self.__Base = {}
             try:
                 while(True):
-                    if '' in self.__Base : break
-                    self.__Base[f.readline().encode()] = f.readline().encode()
+                    id = f.readline().encode()
+                    psswd = f.readline().encode()
+                    if id == b'' : break
+                    self.__Base[id] = psswd
             except Exception:
                 pass
         print("Database Opened")
