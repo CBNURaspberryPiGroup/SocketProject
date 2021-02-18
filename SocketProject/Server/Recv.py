@@ -30,7 +30,8 @@ class RecvData:
                 data.save("%s%s"%(self.storage,fn))
                 break
         print("수신한 데이터:"+str(len)+"byte")
-        print("소요시간:"+str(time.time()-start))   
+        print("소요시간:"+str(time.time()-start))
+        print('୧༼◕ ᴥ ◕༽୨')   
 
     
     def recv_txt(self,fn):
@@ -48,6 +49,7 @@ class RecvData:
                 f.write(data.decode())
         print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start))
+        print('୧༼◕ ᴥ ◕༽୨')
             
             
             
