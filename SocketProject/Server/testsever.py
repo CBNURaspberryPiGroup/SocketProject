@@ -20,13 +20,14 @@ print("listened")
 client, addr = server_socket.accept()
 
 print('Connected by '+str(addr))
-
+Com = Commmand.Command(client,storage)
+Com.split2()
 wok=work.filelist(client,storage)
 wok.list_f()
 
 print('고민성 ㅋ')
 
-Com = Commmand.Command(client,storage)
+
 Com.split()
 
 
