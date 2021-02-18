@@ -13,7 +13,7 @@ class Identification:
                 f.write(str(self.__key))
         else:
             with open('Key.key','r') as f:
-                self.__key = base64.b64encode(f.read().encode())
+                self.__key = base64.urlsafe_b64encode(f.read().encode())
         self.__crypt = fnet(self.__key)
         self.DatabaseOpen()
     
