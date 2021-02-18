@@ -24,7 +24,7 @@ class Identification:
             self.__Base = {}
             try:
                 while(True):
-                    self.__Base[f.readlines().encode()] = f.readlines().encode()
+                    self.__Base[f.readline().encode()] = f.readline().encode()
             except Exception:
                 pass
         print("Database Opened")
