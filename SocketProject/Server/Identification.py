@@ -10,7 +10,7 @@ class Identification:
             self.__key = fnet.generate_key()
             print(self.__key)
             with open('Key.key','w') as f:
-                f.write(str(self.__key))
+                f.write(str(self.__key)[2:-1])
         else:
             with open('Key.key','r') as f:
                 self.__key = base64.urlsafe_b64encode(f.read().encode())
