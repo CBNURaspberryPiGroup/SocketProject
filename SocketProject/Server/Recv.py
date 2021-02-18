@@ -30,6 +30,7 @@ class RecvData:
         f=open("%s%s"%(self.storage,fn),'w')
         while True :
             data=self.client.recv(1024)
+            print(data)
             if '\0' in data.decode():
                 f.write(data.decode()[0:-1])
                 break
