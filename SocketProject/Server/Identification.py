@@ -30,11 +30,10 @@ class Identification:
         print("Database Opened")
                 
     def DatabaseWrite(self):
-        if exists('Auth.Data'):
-            with open('Auth.Data','w') as f:
-                for id in self.__Base.keys():
-                    f.write(id.decode())
-                    f.write(self.__Base[id].decode())
+        with open('Auth.Data','w') as f:
+            for id in self.__Base.keys():
+                f.write(id.decode()+'\n')
+                f.write(self.__Base[id].decode()+'\n')
         print("Database Saved")
         
     def Authentification(self):
