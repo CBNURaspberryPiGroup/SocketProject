@@ -1,7 +1,6 @@
 from socket import socket
 from cryptography.fernet import Fernet as fnet
 from os.path import exists
-import base64
 
 class Identification:
     def __init__(self,client):
@@ -13,7 +12,7 @@ class Identification:
                 f.write(str(self.__key)[2:-1])
         else:
             with open('Key.key','r') as f:
-                self.__key = base64.urlsafe_b64encode(f.read().encode())
+                self.__key = f.read().encode()
         self.__crypt = fnet(self.__key)
         self.DatabaseOpen()
     
