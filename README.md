@@ -37,4 +37,9 @@
   *  os
   *  sys
   *  time
+  *  PyQt5
+
+### 작업환경
+  * Python3.9
+  * vscode
  
