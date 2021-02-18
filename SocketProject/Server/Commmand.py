@@ -27,8 +27,8 @@ class Command():
         self.split_f = filename.split(' ')  
         
         if self.split_f[0] == 'push':
-            if not exists(self.split_f[1]):
-                err = ('Error -'+self.split_f[1]+'- 존재하지 않는 파일 입니다') 
+            if exists(self.split_f[1]):
+                err = ('Error -'+self.split_f[1]+'- 이미 존재하는 파일입니다.') 
                 self.client.sendall(err.encode('utf-8'))
                 
                 print(err)
@@ -37,7 +37,7 @@ class Command():
             
         elif self.split_f[0] == 'pull':
             if not exists(self.split_f[1]):
-                err = ('Error -'+self.split_f[1]+'- 존재하지 않는 파일 입니다') 
+                err = ('Error -'+self.split_f[1]+'- 존재하지 않는 파일 입니다.') 
                 self.client.sendall(err.encode('utf-8'))
                 
                 print(err)
@@ -69,7 +69,7 @@ class Command():
                   
     def file_push(self):
         filename, fileExtension = os.path.splitext(self.split_f[1])
-        err = (self.split_f[1] + '파일 받기 시작')
+        err = (self.split_f[1] + '파일 업로드 시작')
         print(err) 
         self.client.sendall(err.encode('utf-8'))
         Rec=Recv.RecvData(self.client,self.storage)
