@@ -19,8 +19,10 @@ class RecvData:
                 dat=self.client.recv(1024)
                 img_data+=dat
                 data=Image.frombytes(img_mode,size,img_data)
+                result="ok"
             except:
-            else:
+                result="fail"
+            if result=="ok":
                 data.save("%s%s"%(self.storage,fn))
                 break
 
@@ -33,7 +35,8 @@ class RecvData:
                 f.write(data.decode()[0:-1])
                 break
             else :
-                f.write(data.decode())     
+                f.write(data.decode())
+            print("Line saved")
             
             
         
