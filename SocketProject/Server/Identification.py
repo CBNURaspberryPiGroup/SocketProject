@@ -24,7 +24,7 @@ class Identification:
             self.__Base = {}
             try:
                 while(True):
-                    self.__Base[f.readlines()] = f.readlines()
+                    self.__Base[f.readlines().encode()] = f.readlines().encode()
             except Exception:
                 pass
         print("Database Opened")
@@ -33,8 +33,8 @@ class Identification:
         if exists('Auth.Data'):
             with open('Auth.Data','w') as f:
                 for id in self.__Base.keys():
-                    f.write(id)
-                    f.write(self.__Base[id])
+                    f.write(id.decode())
+                    f.write(self.__Base[id].decode())
         print("Database Saved")
         
     def Authentification(self):
@@ -48,6 +48,7 @@ class Identification:
         if password != self.__crypt.decrypt(self.__Base[id]):
             self.client.sendall('Wrong Password'.encode())
             return False
+        print("Authentification Finished")
         return True
             
     def Register(self):
@@ -64,4 +65,5 @@ class Identification:
             return False
         self.__Base[id] = self.__crypt.encrypt(passwd)
         self.DatabaseWrite()
+        print("Register Finished")
         return True
