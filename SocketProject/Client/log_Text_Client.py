@@ -81,22 +81,17 @@ def file_pull(split_f):
             size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
             img_mode=matadata[3]
             img_data=b""
-            count=0
-            start=time.time()
             while True:
                 try:
                     dat=client.recv(1024)
                     img_data+=dat
                     data=Image.frombytes(img_mode,size,img_data)
-                    
-                    count+=1
+                    result="ok"
                 except:
-                    pass
-                else:
-                    data.save("%s%s"%(storage,split_f[1]))
-                    break
-                
-            print(time.time()-start)    
+                    result="fail"
+                if result=="ok":
+                    data.save("%s%s"%(storage,fn))
+                    break    
 
         except Exception as e:
             print(e)
