@@ -22,6 +22,7 @@ class RecvData:
                 img_data+=dat
                 data=Image.frombytes(img_mode,size,img_data)
             except:
+                pass            
             else:
                 data.save("%s%s"%(self.storage,fn))
                 break
@@ -39,6 +40,7 @@ class RecvData:
             else :
                 f.write(data.decode())
         print("소요시간:"+str(time.time()-start))
+            
             
             
             
