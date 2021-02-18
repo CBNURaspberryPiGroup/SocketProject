@@ -52,7 +52,7 @@ class Command():
     def split2(self):
         logein = self.client.recv(1024)
         logein = logein.decode()
-        id=ldentification.ldentification(self.client)
+        id=Identification.Identification(self.client)
         
         
         if logein == 'y':
