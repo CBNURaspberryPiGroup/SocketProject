@@ -59,7 +59,7 @@ class Identification:
         self.client.sendall('Password:'.encode())
         passwd = self.client.recv(1024)
         self.client.sendall('Password Confirm:')
-        if self.client.recv() != passwd:
+        if self.client.recv(1024) != passwd:
             self.client.sendall('Password Confirm Failed'.encode())
             return False
         self.__Base[id] = self.__crypt.encrypt(passwd)
