@@ -24,8 +24,8 @@ class Identification:
             self.__Base = {}
             try:
                 while(True):
-                    id = f.readline().encode()
-                    psswd = f.readline().encode()
+                    id = f.readline().encode()[:-1]
+                    psswd = f.readline().encode()[:-1]
                     if id == b'' : break
                     self.__Base[id] = psswd
             except Exception:
