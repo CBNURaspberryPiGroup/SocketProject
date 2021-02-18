@@ -1,3 +1,4 @@
+  
 import socket
 import os
 import sys
@@ -148,30 +149,83 @@ def send_img(split_f):
             print(e)
             send(repr(e).encode())                       
         
-
-
-def Id_login ():
-        id = client.recv(1024)
-        Deid = id.decode()
-        print("ID를 입력하세요.")
-        
-        while True :
+def Id_reg() :
+    id = client.recv(1024)
+    Deid = id.decode()
+    
+    while True :
             ID = input(Deid)
             # ID_list = ID.split()
             if " " in ID : print("공백은 사용할 수 없습니다.")
                 
-            elif len(ID) >= 8 : print("ID는 8자 이하로 입력하세요")
+            elif len(ID) >= 7 : print("ID는 7자 이하로 입력하세요")
                 
-            elif len(ID) <= 3: print("ID는 3자 이상 입력하세요")
+            elif len(ID) <= 2: print("ID는 3자 이상 입력하세요")
                 
-            else : False
-        print("ID 처리 완료")
-        client.sendall(ID.encode)
+            else : break
+    client.sendall(ID.encode())
+    id = client.recv(1024)
+    Deid = id.decode()
+    print(Deid)  # 
+    
+
+def pw_reg() :
+    pw = client.recv(1024)
+    depw = pw.decode()
+    
+            
+    while True :
+        pw = input(depw)
+        
+        
+        if " " in pw: 
+            print("공백은 사용 할 수 없습니다.")
+            
+        elif len(pw) >= 7: 
+            print("pw는 7자 이하로 입력하세요")
+            
+        elif len(pw) <= 2: 
+            print("pw는 3자 이상 입력하세요")
+        else: break    
+    client.sendall(pw.encode())
+    pw2 = client.recv(1024)
+    depw = pw2.decode()
+    pw2 =input(depw)
+    client.sendall(pw2.encode())
+    pw3 = client.recv(1024)
+    depw = pw3.decode()
+    print(depw)
+    
+    
+    
+
+      
+
+    
+
+
+def Id_login ():
+    id = client.recv(1024)
+    Deid = id.decode()
+    
+    while True :
+        ID = input(Deid)
+
+        if " " in ID : print("공백은 사용할 수 없습니다.")
+              
+        elif len(ID) >= 7 : print("ID는 7자 이하로 입력하세요")
+                
+        elif len(ID) <= 2: print("ID는 3자 이상 입력하세요")
+                
+        else : break
+    
+    client.sendall(ID.encode())
+    
 
 def pw_login():
     pw = client.recv(1024)
     depw = pw.decode()
-    print("pw를 입력하세요.")
+    
             
     while True :
         pw = input(depw)
@@ -179,23 +233,27 @@ def pw_login():
         if " " in pw: 
             print("공백은 사용 할 수 없습니다.")
             
-        elif len(pw) >= 8: 
-            print("pw는 8자 이하로 입력하세요")
+        elif len(pw) >= 7: 
+            print("pw는 7자 이하로 입력하세요")
             
-        elif len(pw) <= 3: 
+        elif len(pw) <= 2: 
             print("pw는 3자 이상 입력하세요")
             
         else : 
-            False
-        print("pw 처리 완료")
-        client.sendall(pw.encode())
+            break
+    
+    client.sendall(pw.encode())
+    
 
 def split2(se):
     if se == 'y':
         Id_login()
         pw_login()
     if se == 'n':
-        pass    
+        Id_reg()
+        pw_reg()
+        time.sleep(1)
+        sys.exit()
     else:
         sys.exit()
 
@@ -209,18 +267,6 @@ print('ᕙ༼◕ ᴥ ◕༽ᕗ')
 logein =input('로그인을할려면 y 회원가입을 할려면 n 을 입력하세요:')
 client.sendall(logein.encode())
 split2(logein)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 data = client.recv(1024)
