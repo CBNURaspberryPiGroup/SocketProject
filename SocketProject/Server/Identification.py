@@ -48,7 +48,7 @@ class Identification:
             return False
         self.client.sendall('Password:'.encode())
         passwd = self.client.recv(1024)
-        if password != self.__crypt.decrypt(self.__Base[id]):
+        if passwd != self.__crypt.decrypt(self.__Base[id]):
             self.client.sendall('Wrong Password'.encode())
             return False
         print("Authentification Finished")
