@@ -1,4 +1,3 @@
-  
 import socket
 import os
 import sys
@@ -149,107 +148,77 @@ def send_img(split_f):
             print(e)
             send(repr(e).encode())                       
         
-def Id_reg() :
-    id = client.recv(1024)
-    Deid = id.decode()
-    print("ID를 입력하세요")
-    while True :
-            ID = input("ID 입력:")
-            # ID_list = ID.split()
-            if " " in ID : print("공백은 사용할 수 없습니다.")
-                
-            elif len(ID) >= 7 : print("ID는 7자 이하로 입력하세요")
-                
-            elif len(ID) <= 2: print("ID는 3자 이상 입력하세요")
-                
+ 
+def reg() :
+    def condition (inf) :
+            while True :
+                inf = input(inf)
+                if " " in inf : print("공백은 사용할 수 없습니다.")
+                elif len(inf) >= 7 : print("ID는 7자 이하로 입력하세요")
+                elif len(inf) <= 2: print("ID는 3자 이상 입력하세요")                
+                else : break
+    
+    def process (inf) : #log in + sign up for id
+        while True :
+            inf = client.recv(1024)
+            inf = inf.decode()
+            condition(inf)
+            client.sendall(inf.encode())
+            inf = client.recv(1024)
+            inf = inf.decode()
+            inf = client.recv(1024)
+            inf = inf.decode()
+            if inf == 'Password Confirm Failed' : True
             else : break
-    client.sendall(ID.encode)
-    print("ID 처리 완료")
+        print(inf)
 
-def pw_reg() :
-    pw = client.recv(1024)
-    depw = pw.decode()
-    print("pw를 입력하세요.")
-            
-    while True :
-        pw = input("pw입력:")
-        
-        if " " in pw: 
-            print("공백은 사용 할 수 없습니다.")
-            
-        elif len(pw) >= 7: 
-            print("pw는 7자 이하로 입력하세요")
-            
-        elif len(pw) <= 2: 
-            print("pw는 3자 이상 입력하세요")
+    id = ""
+    pw = ""
+    process(id)
+    process(pw)
+    pw2 = input(pw)
+    client.sendall(pw2.encode())
+    pw2 = client.recv(1024)
+    pw = pw2.decode()
+    print(pw)
 
-        print("한번 더 pw를 입력하세요.")
-
-        pw2 = input("한번 더 pw를 입력하세요:")
-        
-        if " " in pw2: 
-            print("공백은 사용 할 수 없습니다.")
-            
-        elif len(pw2) >= 7: 
-            print("pw는 7자 이하로 입력하세요")
-            
-        elif len(pw2) <= 2: 
-            print("pw는 3자 이상 입력하세요")
-            
-        elif pw == pw2 : break
-
-    client.sendall(pw.encode())
-    print("등록완료")
-
-
-def Id_login ():
-    id = client.recv(1024)
-    Deid = id.decode()
-    print("ID를 입력하세요.") 
-    while True :
-        ID = input("id입력:")
-
-        if " " in ID : print("공백은 사용할 수 없습니다.")
-              
-        elif len(ID) >= 7 : print("ID는 7자 이하로 입력하세요")
-                
-        elif len(ID) <= 2: print("ID는 3자 이상 입력하세요")
-                
-        else : break
+def login ():
+    def condition (inf) :
+            while True :
+                inf = input(inf)
+                if " " in inf : print("공백은 사용할 수 없습니다.")
+                elif len(inf) >= 7 : print("ID는 7자 이하로 입력하세요")
+                elif len(inf) <= 2: print("ID는 3자 이상 입력하세요")                
+                else : break
     
-    client.sendall(ID.encode)
-    print("ID 처리 완료")
+    def process (inf) :
+        while True :
+            inf = client.recv(1024)
+            inf = inf.decode()
+            condition(inf)
+            client.sendall(inf.encode())
+            inf = client.recv(1024)
+            inf = inf.decode()
+            if inf == 'Password Confirm Failed' : True
+            else : break
+        print(inf)
+    id = ""
+    pw = ""
+    condition(id)
+    process(id)
+    condition(pw)
+    process(pw)
 
-def pw_login():
-    pw = client.recv(1024)
-    depw = pw.decode()
-    print("pw를 입력하세요.")
-            
-    while True :
-        pw = input("pw입력:")
-        
-        if " " in pw: 
-            print("공백은 사용 할 수 없습니다.")
-            
-        elif len(pw) >= 7: 
-            print("pw는 7자 이하로 입력하세요")
-            
-        elif len(pw) <= 2: 
-            print("pw는 3자 이상 입력하세요")
-            
-        else : 
-            break
     
-    client.sendall(pw.encode())
-    print("pw 처리 완료")
+        
 
 def split2(se):
     if se == 'y':
-        Id_login()
-        pw_login()
+        login()
     if se == 'n':
-        Id_reg()
-        pw_reg()
+        reg()
+        time.sleep(1)
+        sys.exit()
     else:
         sys.exit()
 
