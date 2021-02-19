@@ -22,9 +22,10 @@
     * 2021.02.16: C++버전 클라이언트 수정, Txt 받기 성공
     * 2021.02.17: C++ 클라이언트 이미지 받기 작업중
   * 황지현
-    * 2021.02.15: client register.py 추가
+    * 2021.02.15: client register.py add
     * 2021.02.16: client register.py 
-    * 2021.02.19: client register, login (dd.py) 추가
+    * 2021.02.19: client infinit roof of login and registor add
+    * 2021.02.19: server infinit roof of login and registor (with 2.5)
   * 고민성
     * 2021.02.05: Recv.py 수정
     * 2021.02.09: 고민성 왔다감, recv.py 수정
