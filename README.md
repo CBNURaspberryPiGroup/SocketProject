@@ -24,6 +24,7 @@
   * 황지현
     * 2021.02.15: client register.py 추가
     * 2021.02.16: client register.py 
+    * 2021.02.19: client register, login (dd.py) 추가
   * 고민성
     * 2021.02.05: Recv.py 수정
     * 2021.02.09: 고민성 왔다감, recv.py 수정
