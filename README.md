@@ -26,6 +26,8 @@
     * 2021.02.16: client register.py 
     * 2021.02.19: client infinit roof of login and registor add
     * 2021.02.19: server infinit roof of login and registor (with 2.5)
+    * 2021.02.20: infinite_loof_server.py revise
+    * 2021.02.20: infinite infinite_registor_and_login_with_client.py revise
   * 고민성
     * 2021.02.05: Recv.py 수정
     * 2021.02.09: 고민성 왔다감, recv.py 수정
