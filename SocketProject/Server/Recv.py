@@ -40,12 +40,12 @@ class RecvData:
         size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
         img_mode=matadata[3]
         img_data=b""
-        size=0
+        Size=0
         start=time.time()
         while True:
             try:
                 dat=self.client.recv(1024)
-                size+=len(dat)
+                Size+=len(dat)
                 img_data+=dat
                 data=Image.frombytes(img_mode,size,img_data)
             except:
