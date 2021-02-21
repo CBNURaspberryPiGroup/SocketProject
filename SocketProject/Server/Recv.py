@@ -3,7 +3,6 @@ from PIL import Image
 import time 
 import os
 import work
-import Commmand
 
 class RecvData:
     def __init__(self,client,storage):
