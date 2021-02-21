@@ -58,10 +58,12 @@ class Command():
 
 
             if logein == 'y':
+                print('y')
                 if id.Authentification():
                     break
 
             if logein == 'n':
+                print('n')
                 if id.Register():
                     break
             
