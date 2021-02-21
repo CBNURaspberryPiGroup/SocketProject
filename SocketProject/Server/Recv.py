@@ -2,13 +2,14 @@ import socket
 from PIL import Image
 import time 
 import os
-import Work
+import work
+
 
 class RecvData:
     def __init__(self,client,storage):
         self.client = client
         self.storage = storage
-        wok=Work.filelist(self.client,self.storage)
+        
         
     def recv_img(self,fn):
         matadata=self.client.recv(1024)
@@ -34,6 +35,7 @@ class RecvData:
         print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
+        wok=work.filelist(self.client,self.storage)
         wok.list_f()
 
     
@@ -53,6 +55,7 @@ class RecvData:
         print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
+        wok=work.filelist(self.client,self.storage)
         wok.list_f()
             
             
