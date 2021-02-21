@@ -191,9 +191,9 @@ def reg() :
         
 
     
-    process('ID:')
-    if process2('PW:'):
-        return True
+    ifprocess('ID:'):
+        if process2('PW:'):
+            return True
 
 def login ():
     def condition (inf) :
@@ -215,9 +215,9 @@ def login ():
                 return True
         
    
-    process('ID:')
-    if process('PW:'):
-        return True
+    if process('ID:'):
+        if process('PW:'):
+            return True
 
 
 
