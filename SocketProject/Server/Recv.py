@@ -9,28 +9,6 @@ class RecvData:
     def __init__(self,client,storage):
         self.client = client
         self.storage = storage
-    '''def recv(self,size=1024):
-        try:
-            self.client.recv(1024)
-        except ConnectionResetError:
-            print("연결이 끊어졌습니다.")
-            a=0
-            while True :
-                a += 1
-                Host=input("ip값을 입력해주세요")
-                Port=input("port값을 입력해주세요")
-                self.client.bind((Host,Port))
-                print("listening...")
-                self.client.listen()
-                print("listened")
-                client, addr = self.client.accept()
-                print('Connected by '+str(addr))
-                Com = Commmand.Command(self.client,self.storage)
-                if a == 1 : 
-                    Com.split2()
-                wok=work.filelist(self.client,self.storage)
-                wok.list_f()
-                Com.split()'''
                  
     def recv_img(self,fn):
         matadata=self.client.recv(1024)
