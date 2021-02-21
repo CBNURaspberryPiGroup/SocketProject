@@ -40,12 +40,12 @@ class RecvData:
         size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
         img_mode=matadata[3]
         img_data=b""
-        #a=0
+        a=0
         start=time.time()
         while True:
             try:
                 dat=self.client.recv(1024)
-                #a+=len(dat)
+                a+=len(dat)
                 img_data+=dat
                 data=Image.frombytes(img_mode,size,img_data)
             except:
@@ -53,7 +53,7 @@ class RecvData:
             else:
                 data.save("%s%s"%(self.storage,fn))
                 break
-        #print("수신한 데이터:"+str(len)+"byte")
+        print("수신한 데이터:"+str(a)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
         wok=work.filelist(self.client,self.storage)
@@ -73,7 +73,7 @@ class RecvData:
                 break
             else :
                 f.write(data.decode())
-        print("수신한 데이터:"+str(len)+"byte")
+        print("수신한 데이터:"+str(size)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
         wok=work.filelist(self.client,self.storage)
