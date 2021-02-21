@@ -48,7 +48,7 @@ class Identification:
             print('id2')
             self.client.sendall('ID Not Found'.encode())
             return False
-    
+        self.client.sendall('ok'.encode())
         passwd = self.client.recv(1024)
         print(passwd)
         if passwd != self.__crypt.decrypt(self.__Base[id]):
