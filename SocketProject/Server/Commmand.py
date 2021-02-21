@@ -50,16 +50,19 @@ class Command():
             self.client.sendall(err.encode('utf-8'))
     
     def split2(self):
-        logein = self.client.recv(1024)
-        logein = logein.decode()
-        id=Identification.Identification(self.client)
-        
-        
-        if logein == 'y':
-            id.Authentification()
-            
-        if logein == 'n':
-            id.Register()    
+        while True:
+            logein = self.client.recv(1024)
+            logein = logein.decode()
+            id=Identification.Identification(self.client)
+
+
+            if logein == 'y':
+                if id.Authentification():
+                    break
+
+            if logein == 'n':
+                if id.Register():
+                    break
             
             
             
