@@ -11,6 +11,7 @@ import time
 from PIL import Image
 import re
 import json
+import subprocess
 
 
 
@@ -35,65 +36,142 @@ class sever_start(QThread):
     def run(self):
         
         self.main.json_rm() 
+        try:
+            self.client.connect((self.main.Host, int(self.main.Port)))
+            self.n=('서버와 연결되었습니다')
+            self.threadEvent.emit(self.n)
+            
+        except Exception as e:
+                print(e)
+                self.n=('서버 접속 실패 HOST,PORT 정보를 확인해주세요')
+                self.threadEvent.emit(self.n)
+                
+                self.main.stop()
+                return    
+        self.main.btn_log.setEnabled(True)
+        self.main.btn_log2.setEnabled(True)
         
-        self.main.client.connect((self.main.Host, int(self.main.Port))) 
-        self.n = ('서버와 연결되었습니다')
+    def run2(self):    
+                
+             
         
-        self.threadEvent.emit(self.n)
         self.main.btn_push.setEnabled(True)
         self.main.btn_pull.setEnabled(True)
         self.main.btn_sever.setEnabled(False)
+        self.main.btn_log.setEnabled(False)
+        self.main.btn_log2.setEnabled(False)
         
         print('ᕙ༼◕ ᴥ ◕༽ᕗ')
-        data = client.recv(1024)
+        data = self.client.recv(1024)
         for path in data.decode():
-            self.lsitw.addItem(path)
+            self.main.lsitw.addItem(path)
             
+    
+    def login(self):
+        self.client.sendall('y'.encode())  
+        if self.process(self.main.ID):
+            if self.process(self.main.PW):
+                self.run2()
+            
+    def reg(self):
+        self.client.sendall('n'.encode())  
+        if self.process(self.main.ID):
+            if self.process2(self.main.PW):
+                self.run2()
+                   
+    
+    def process(self,inf):
+        
+        
+            
+        self.client.sendall(inf.encode())
+        inf = self.client.recv(1024)
+        inf = inf.decode()
+        if inf == 'ID Not Found' or inf == 'Wrong Password' or inf == 'ID Already Exists': 
+            self.n=('awd')
+            self.threadEvent.emit(self.n)
+            return False
+        else:
+            return True    
+        
+        
+               
+    
+    
+    
+       
+        
+    def process2(self,inf) : #log in + sign up for id
+            
+               
+                
+        self.client.sendall(inf.encode())
+        dnf = self.client.recv(1024)
+        dnf = dnf.decode()
+        print(dnf)
+                
+        self.client.sendall(inf.encode())
+        if inf == 'Password Confirm Failed' :
+            self.n=(inf)
+            self.threadEvent.emit(self.n) 
+            return False
+        else:
+            return True
            
-            
+
+     
     def sever_push(self):  #확인
         filename =('push '+self.main.fn)
         self.client.sendall(filename.encode('utf-8')) 
         
-        sev=sever()
-        sev.split(filename)
+        self.split(filename)
+        
+        self.main.lsitw.clear()
+        
+        data = self.client.recv(1024)
+        for path in data.decode():
+            self.main.lsitw.addItem(path)
+        
         
     def sever_pull(self):
-        filename =('pull ',self.main.fn)
+        filename =('pull '+self.main.fn)
         self.client.sendall(filename.encode('utf-8'))
         
-        sev=sever()
-        sev.split(filename)
+        self.split(filename)
+        self.main.lsitn.clear()
+        self.main.list_show()
+        
+        
+        
+        
+        
            
         
-class sever():
-    def __intit__(self,sever_start):
-        
-        self.sever_start = sever_start
+
         
         
         
     
 
-# 명령어 해석
+# 명령어 해석 ###############################################
 
     def split(self,filename):
             split_f = filename.split(' ')  
             if split_f[0] == 'push':
                 print(split_f[0])
-                data = self.sever_start.client.recv(1024)  #문제발생
+                data = self.client.recv(1024)  #문제발생
                 print(data.decode())
                 file_push(split_f)
                 
                 
             elif split_f[0] == 'pull':
-                data = self.sever_start.client.recv(1024)
+                data = self.client.recv(1024)
                 print(data.decode())
                 
                 file_pull(split_f)
                 
             else:
-                data = self.sever_start.client.recv(1024)
+                data = self.client.recv(1024)
                 print(data.decode())
                 
     # 파일 받기
@@ -103,15 +181,22 @@ class sever():
             
         if fileExtension == '.txt':
             try:
-                f=open("%s%s"%(self.sever_start.storage,split_f[1]),'w')
+                f=open("%s%s"%(self.storage,split_f[1]),'w')
+                start=time.time()
+                size=0
                 while True :
                     data=self.sever_start.client.recv(1024)
+                    size+=len(data)
                     if '\0' in data.decode():
                         f.write(data.decode()[0:-1])
-                        print(split_f[1]+ '받기완료')
+                        
                         break
                     else :
                         f.write(data.decode()) 
+                print("수신한 데이터:"+str(len)+"byte")
+                print("소요시간:"+str(time.time()-start)+"초")
+                print('୧༼◕ ᴥ ◕༽୨') 
+                       
             except Exception as e:
                 print(e)               
             
@@ -119,33 +204,29 @@ class sever():
         elif fileExtension == '.png'or '.jpg':
             try:
                 
-                matadata= self.sever_start.client.recv(1024)
+                matadata=self.client.recv(1024)
                 matadata=matadata.decode()
-                print(matadata)
                 matadata= matadata.split(":")
-                img_size= matadata[1].split(",")  # 여기까지 됨
+                img_size= matadata[1].split(",")  
                 size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
                 img_mode=matadata[3]
-                    
                 img_data=b""
-                data = self.sever_start.client.recv(1024)
-                count=0 
-                start =time.time()
+                size=0
+                start=time.time()
                 while True:
-                    count+=1 
-                    img_data+=data
-                    data=self.sever_start.client.recv(1024)
-                    if time.time()-start >=10:
-                        print(split_f[1]+ ' 받기실패 Timeout(10)')
-                        break
-                print(count)    
-                
-                img_data+=data
-
-                data = Image.frombytes(img_mode,size,img_data) 
-                
-                data.save("%s%s"%(self.main.storage,split_f[1])) 
-                    
+                    try:
+                        dat=self.client.recv(1024)
+                        img_data+=dat
+                        data=Image.frombytes(img_mode,size,img_data)
+                        result="ok"
+                    except:
+                        result="fail"
+                    if result=="ok":
+                        data.save("%s%s"%(self.storage,split_f[1]))
+                        break 
+                    print("수신한 데이터:"+str(len)+"byte")
+                    print("소요시간:"+str(time.time()-start)+"초")
+                    print('୧༼◕ ᴥ ◕༽୨')        
 
             except Exception as e:
                 print(e)
@@ -161,12 +242,12 @@ class sever():
             self.send_img(split_f)    
         
     def send(self,data,size=1024):
-            self.sever_start.client.sendall(data,size)
+            self.client.sendall(data)
             return len(data)
         
     def send_txt(self,split_f):
             try: 
-                with open(self.main.storage+"/"+split_f[1],'r') as f:
+                with open(self.storage+"/"+split_f[1],'r') as f:
                     data = f.readlines()
                 
                 size = 0
@@ -180,7 +261,7 @@ class sever():
                 
     def send_img(self,split_f):
             try:
-                data = Image.open(self.sever_start.storage+"/"+split_f[1])
+                data = Image.open(self.storage+"/"+split_f[1])
                 metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
                 data = data.tobytes()
                 self.send(metadata.encode())
@@ -214,12 +295,17 @@ class MainDialog(QDialog):
         
         
         self.btn_sever.clicked.connect(self.start)
+        self.btn_log.clicked.connect(self.start2)
+        self.btn_log2.clicked.connect(self.start3)
         self.btn_push.clicked.connect(self.push)
         self.btn_pull.clicked.connect(self.pull)
         self.btn_stop.clicked.connect(self.stop)
         self.btn_f.clicked.connect(self.file_add)
         self.btn_push.setEnabled(False)
         self.btn_pull.setEnabled(False)
+        self.btn_log.setEnabled(False)
+        self.btn_log2.setEnabled(False)
+        self.listn.itemDoubleClicked.connect(self.show_1)
         self.cb_ip.stateChanged.connect(self.rmip)
         self.cb_id.stateChanged.connect(self.rmid)
         self.cb_sto.stateChanged.connect(self.rmsto)
@@ -240,13 +326,19 @@ class MainDialog(QDialog):
     def start(self):   #접속버튼
           
         if self.check():
-            self.list_show() 
+            if self.check_login():
+                return
+                
+            if self.list_show():
+                return
+                    
+            
             self.th = sever_start(self)
             self.th.threadEvent.connect(self.threadEventHandler)
             
                     
         
-            self.textv.append('서버 접속 시도중...')
+            self.textv.setPlainText('서버 접속 시도중...')
             
             if not self.th.isRun:
                 print('메인 : 쓰레드 시작')
@@ -254,24 +346,72 @@ class MainDialog(QDialog):
                 self.th.start()
         else:
             self.textv.append('입력정보가 올바른지 확인해주세요')
+    
+    def start2(self):
+        self.tn.login()
+        
+    
+    def start3(self):
+        self.th.reg()
+    
+    
+    
                 
     def check(self):   #미입력된 정보 체크하기 
         try:
             Host = self.line_ip.text()
-            
             self.Host = Host
+             
+            
             Port = self.line_pt.text()
-            
             self.Port =Port
+         
+            
             Storage = self.line_sto.text()
-            
             self.Storage =Storage
+           
+                
+            
+            ID = self.line_ed.text()
+            self.ID =ID
+          
+               
             
             
+            PW = self.line_pw.text()
+            self.PW =PW
+            
+                
+        
             return True
         except Exception as e:
                 print(e)
-                return False      
+                return False
+                  
+    def check_login(self):
+        
+        if " " in self.ID : 
+            self.textv.append("ID에 공백은 사용할 수 없습니다.")
+            return True
+        elif len(self.ID) >= 7 : 
+            self.textv.append("ID를 7자 이하로 입력하세요")
+            return True
+        elif len(self.ID) <= 2: 
+            self.textv.append("ID를 3자 이상 입력하세요")
+            return True
+        elif " " in self.PW : 
+            self.textv.append("PW에 공백은 사용할 수 없습니다.")
+            return True
+        elif len(self.PW) >= 7 : 
+            self.textv.append("PW를 7자 이하로 입력하세요")
+            return True
+        elif len(self.PW) <= 2: 
+            self.textv.append("PW를 3자 이상 입력하세요") 
+            return True
+        else: return False                
+        
+    
+    
             
     @pyqtSlot() 
     def push(self):    #업로드 버튼
@@ -303,7 +443,7 @@ class MainDialog(QDialog):
         if self.th.isRun:
             print('메인 : 쓰레드 정지')
             self.th.isRun = False
-            sys.exit()
+            
         else:
             sys.exit()    
                 
@@ -314,15 +454,23 @@ class MainDialog(QDialog):
     def threadEventHandler(self, n):
         print(n)
         self.textv.append(n)
+    
+    def show_1(self):
+        print('더블클릭')
          
     #디렉토리 파일 보여주기       
-    def list_show(self):   
-        file_list1 = os.listdir(self.Storage)
-        self.listn.clear()
-        for file in file_list1: 
-            if file.endswith(".txt") or file.endswith(".png") or file.endswith(".jpg"):
-                self.listn.addItem(file)
-            
+    def list_show(self):
+        try:   
+            file_list1 = os.listdir(self.Storage)
+            self.listn.clear()
+            for file in file_list1: 
+                if file.endswith(".txt") or file.endswith(".png") or file.endswith(".jpg"):
+                    self.listn.addItem(file)
+                    return False 
+        except Exception as e:
+            self.textv.append('Storage 정보가 맞는지 확인해주세요')
+            print(e)  
+            return True  
     #json 정보 불러오기        
     def json_show(self):
         
@@ -341,21 +489,21 @@ class MainDialog(QDialog):
             self.conf['PORT']= self.line_pt.text()
         
         else:
-            self.conf['HOST']= ''
-            self.conf['PORT']= ''
+            self.conf['HOST']= 'Host를 입력하세요'
+            self.conf['PORT']= 'Port를 입력하세요'
                 
         
         if self.rmid():
             self.conf['ID']= self.line_ed.text()
             
         else:
-            self.conf['ID'] =''
+            self.conf['ID'] ='ID를 입력하세요'
         
         if self.rmsto():
             self.conf['STORAGE']= self.line_sto.text()
         
         else:
-            self.conf['STORAGE'] = ''
+            self.conf['STORAGE'] = 'STORAGE를 입력하세요'
                 
             
                 
@@ -395,6 +543,7 @@ if __name__ == "__main__":
     try:
         app = QApplication(sys.argv)
         main_dialog = MainDialog()
+       
         main_dialog.show()
     
         app.exec_()
@@ -406,7 +555,7 @@ if __name__ == "__main__":
         
         
         
-      
+        
 
         
            
