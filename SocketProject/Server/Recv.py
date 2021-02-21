@@ -34,7 +34,7 @@ class RecvData:
         print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
-        wor.list_f()
+        wok.list_f()
 
     
     def recv_txt(self,fn):
@@ -53,7 +53,7 @@ class RecvData:
         print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
-        wor.list_f()
+        wok.list_f()
             
             
             
