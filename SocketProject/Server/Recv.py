@@ -9,7 +9,7 @@ class RecvData:
     def __init__(self,client,storage):
         self.client = client
         self.storage = storage
-    "def recv(self,size=1024):
+    '''def recv(self,size=1024):
         try:
             self.client.recv(1024)
         except ConnectionResetError:
@@ -30,7 +30,7 @@ class RecvData:
                     Com.split2()
                 wok=work.filelist(self.client,self.storage)
                 wok.list_f()
-                Com.split()"
+                Com.split()'''
                  
     def recv_img(self,fn):
         matadata=self.client.recv(1024)
@@ -40,12 +40,12 @@ class RecvData:
         size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
         img_mode=matadata[3]
         img_data=b""
-        a=0
+        #a=0
         start=time.time()
         while True:
             try:
                 dat=self.client.recv(1024)
-                a+=len(dat)
+                #a+=len(dat)
                 img_data+=dat
                 data=Image.frombytes(img_mode,size,img_data)
             except:
@@ -53,7 +53,7 @@ class RecvData:
             else:
                 data.save("%s%s"%(self.storage,fn))
                 break
-        print("수신한 데이터:"+str(len)+"byte")
+        #print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
         wok=work.filelist(self.client,self.storage)
