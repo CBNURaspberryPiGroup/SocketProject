@@ -8,7 +8,7 @@ class RecvData:
     def __init__(self,client,storage):
         self.client = client
         self.storage = storage
-        wok=Work(self.client,self.storage)
+        wok=Work.filelist(self.client,self.storage)
         
     def recv_img(self,fn):
         matadata=self.client.recv(1024)
@@ -33,7 +33,8 @@ class RecvData:
                 break
         print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
-        print('୧༼◕ ᴥ ◕༽୨')   
+        print('୧༼◕ ᴥ ◕༽୨')
+        wor.list_f()
 
     
     def recv_txt(self,fn):
@@ -52,6 +53,7 @@ class RecvData:
         print("수신한 데이터:"+str(len)+"byte")
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
+        wor.list_f()
             
             
             
