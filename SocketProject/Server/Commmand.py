@@ -87,5 +87,11 @@ class Command():
         sed=Send.SendData(self.client,self.storage)
         if fileExtension == '.txt':
             sed.send_txt(self.split_f[1])
+            data = self.client.recv(1024)
+                for path in data.decode():
+                    print(data)
         elif fileExtension == '.png'or'.jpg':
             sed.send_img(self.split_f[1])
+            data = self.client.recv(1024)
+                for path in data.decode():
+                    print(data)
