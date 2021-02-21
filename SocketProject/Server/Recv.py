@@ -2,12 +2,14 @@ import socket
 from PIL import Image
 import time 
 import os
+import Work
 
 class RecvData:
     def __init__(self,client,storage):
         self.client = client
         self.storage = storage
-
+        wok=Work(self.client,self.storage)
+        
     def recv_img(self,fn):
         matadata=self.client.recv(1024)
         matadata=matadata.decode()
