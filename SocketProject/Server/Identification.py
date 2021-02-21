@@ -43,12 +43,16 @@ class Identification:
     def Authentification(self):
         
         id = self.client.recv(1024)
+        print(id)
         if not( id in self.__Base):
+            print('id2')
             self.client.sendall('ID Not Found'.encode())
             return False
     
         passwd = self.client.recv(1024)
+        print(passwd)
         if passwd != self.__crypt.decrypt(self.__Base[id]):
+            print('pw2')
             self.client.sendall('Wrong Password'.encode())
             return False
         print("Authentification Finished")
@@ -57,14 +61,18 @@ class Identification:
     def Register(self):
         
         id = self.client.recv(1024)
+        print(id)
         if id in self.__Base :
             self.client.sendall('ID Already Exists'.encode())
+            print('id2')
             return False
         self.client.sendall('ID is available'.encode())
         
         passwd = self.client.recv(1024)
+        print(passwd)
         self.client.sendall('Password Confirm:'.encode())
         if self.client.recv(1024) != passwd:
+            print('pw2')
             self.client.sendall('Password Confirm Failed'.encode())
             return False
         self.client.sendall('Sign up complete'.encode())       
