@@ -55,6 +55,7 @@ class Identification:
             print('pw2')
             self.client.sendall('Wrong Password'.encode())
             return False
+        self.client.sendall('ok'.encode())
         print("Authentification Finished")
         return True
             
