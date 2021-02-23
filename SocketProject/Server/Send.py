@@ -10,6 +10,12 @@ class SendData:
         self.client.sendall(data,size)
         return len(data)
 
+    def send_vid(self,fn):
+        vid=open(self.storage+"/"+fn,"wb")
+        for lines in vid.readlines():
+            self.send(lines)
+        self.send('끝'.encode('utf-8')) 
+    
     def send_txt(self,fn):
         try: 
             with open(self.storage+"/"+fn,'r') as f:
