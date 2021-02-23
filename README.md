@@ -40,6 +40,7 @@
     * 2021.02.21: recv.py와 work 모듈 합치는 과정 속 오류 수정, recv.py 데이터 용량 표기 오류 수정
     * 2021.02.23: recv.py와 send.py에 바이너리파일(mp3,mp4,avi) 송수신 가능 추가
       work.py,commmand.py,client.py에서 바이너리파일 인식하게 수정(클라이언트 gui 버전 수정해야합니다)
+      recv.py 주석 추가
       
 ### 진행상황
   * 2021.02.18: 
