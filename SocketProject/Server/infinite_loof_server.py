@@ -2,6 +2,8 @@ import socket
 import Commmand
 import work
 import Send
+import Logging as Log
+from os.path import exists
 
 
 Host = ''
@@ -12,6 +14,9 @@ storage = "./"
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+if not exists("log.log") :
+    Log.startlog()
 
 a = 0
 
