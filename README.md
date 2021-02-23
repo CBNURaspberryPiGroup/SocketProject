@@ -23,6 +23,8 @@
     * 2021.02.05: Identification.py 추가
     * 2021.02.16: C++버전 클라이언트 수정, Txt 받기 성공
     * 2021.02.17: C++ 클라이언트 이미지 받기 작업중
+    * 2021.02.18: Identification.py 수정
+    * 2021.02.23: Logging.py 파일 추가
   * 황지현
     * 2021.02.15: client register.py add
     * 2021.02.16: client register.py 
