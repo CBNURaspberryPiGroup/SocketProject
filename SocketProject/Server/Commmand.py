@@ -5,7 +5,7 @@ import sys
 import Send
 import Recv
 import Identification
-
+import Logging as Log
 
 
 
@@ -47,6 +47,7 @@ class Command():
         else:
             err = ('Error -'+self.split_f[0]+'- 존재하지 않는 명령어 입니다')
             print(err) 
+            Log.log(0,"Invalid Command : %s"%filename)
             self.client.sendall(err.encode('utf-8'))
     
     def split2(self):
