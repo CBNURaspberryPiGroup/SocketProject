@@ -11,6 +11,6 @@ def log(flag, comment):
     system("touch log.log")
 
     now = datetime.now()
-    flagList = ["[Err]","[Auth]","[FileIO]","","","","","","[Info]","[Test]"]
+    flagList = ["[Err]","[Connect]","[Auth]","[FileIO]","","","","","[Info]","[Test]"]
 
     system("echo %s %i %s %% %s >> log.log"%(now,flag,flagList[flag],comment))
