@@ -24,6 +24,10 @@ def list_f():
     file_list.append([file for file in file_list1 if file.endswith(".txt")])
     file_list.append([file for file in file_list1 if file.endswith(".png")])
     file_list.append([file for file in file_list1 if file.endswith(".jpg")])
+    file_list.append([file for file in file_list1 if file.endswith(".avi")])
+    file_list.append([file for file in file_list1 if file.endswith(".mp4")])
+    file_list.append([file for file in file_list1 if file.endswith(".mp3")])
+
 
     print ('현제 디렉토리 파일: ',file_list)
 
@@ -90,12 +94,28 @@ def file_pull(split_f):
                 except:
                     result="fail"
                 if result=="ok":
-                    data.save("%s%s"%(storage,fn))
-                    break    
+                    data.save("%s%s"%(storage,split_f[1]))
+                break    
 
         except Exception as e:
             print(e)
-            
+    elif fileExtension == '.avi'or '.mp4' or '.mp3':
+        try:
+            vid=open(storage+'/'+split_f[1],"wb")
+            a=0
+            start=time.time()
+
+            while True:
+                data=client.recv(1024)
+                if data==b'\xeb\x81\x9d':
+                    break
+                vid.write(data)
+            print("수신한 데이터:"+str(a)+"byte")
+            print("소요시간:"+str(time.time()-start)+"초")
+            print('୧༼◕ ᴥ ◕༽୨')
+        except Exception as e:
+            print(e)    
+
 # 파일 보내기
             
 def file_push(split_f):
@@ -104,11 +124,23 @@ def file_push(split_f):
         send_txt(split_f)
         
     elif fileExtension == '.png'or '.jpg':
-        send_img(split_f)    
+        send_img(split_f)
+    elif fileExtension == '.avi'or '.mp4'or'.mp3':
+        send_vid(split_f)    
     
 def send(data,size=1024):
         client.sendall(data,size)
         return len(data)
+
+def send_vid(split_f):
+    try:
+        vid=open(storage+"/"+split_f[1],"wb")
+        for lines in vid.readlines():
+            send(lines)
+        send('끝'.encode('utf-8')) 
+    except Exception as e:
+        print(e)
+        send(repr(e).encode())
     
 def send_txt(split_f):
         try: 
