@@ -28,6 +28,7 @@ while 1 :
     print("listened")
     client, addr = server_socket.accept()
     print('Connected by '+str(addr))
+    Log.log(1,"Connected by "+str(addr))
     Com = Commmand.Command(client,storage)
     if a == 1 : 
         Com.split2()
