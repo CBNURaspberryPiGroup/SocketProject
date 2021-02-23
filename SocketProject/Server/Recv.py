@@ -8,6 +8,20 @@ class RecvData:
     def __init__(self,client,storage):
         self.client = client
         self.storage = storage
+
+    def recv_vid(self,fn):
+        vid=open(self.storage+'/'+fn,"wb")
+        a=0
+        start=time.time()
+
+        while True:
+            data=self.client.recv(1024)
+            if data==b'\xeb\x81\x9d':
+                break
+            vid.write(data)
+        print("수신한 데이터:"+str(a)+"byte")
+        print("소요시간:"+str(time.time()-start)+"초")
+        print('୧༼◕ ᴥ ◕༽୨')    
                  
     def recv_img(self,fn):
         matadata=self.client.recv(1024)
