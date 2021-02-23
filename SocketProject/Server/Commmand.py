@@ -82,7 +82,9 @@ class Command():
         if fileExtension == '.txt':
             Rec.recv_txt(self.split_f[1])
         elif fileExtension == '.png'or'.jpg':
-            Rec.recv_img(self.split_f[1]) 
+            Rec.recv_img(self.split_f[1])
+        elif fileExtension == '.avi'or'.mp4' or'.mp3':
+            Rec.recv_vid(self.split_f[1])  
         
               
     def file_pull(self):
@@ -101,3 +103,8 @@ class Command():
             data = self.client.recv(1024)
             for path in data.decode():
                 print(data)
+        elif fileExtension == '.avi'or'.mp4' or'.mp3':
+            sed.send_vid(self.split_f[1])
+            data=self.client.recv(1024)
+            for path in data.decode():
+                print(data) 
