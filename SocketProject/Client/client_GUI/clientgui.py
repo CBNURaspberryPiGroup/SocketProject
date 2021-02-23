@@ -21,7 +21,7 @@ import subprocess
                        
 
 
-class sever_start(QThread): #돌아가는 서버
+class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
     threadEvent = QtCore.pyqtSignal(str)
      
     def __init__(self,main):
