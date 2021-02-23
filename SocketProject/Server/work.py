@@ -19,7 +19,7 @@ class filelist() :
         # file_list.append([file for file in file_list1 if file.endswith(".png")])
         # file_list.append([file for file in file_list1 if file.endswith(".jpg")])
         for file in file_list1: 
-            if file.endswith(".txt") or file.endswith(".png") or file.endswith(".jpg") or file.endswith(".avi") or file.endswith(".mp4") file.endswith(".mp3"):
+            if file.endswith(".txt") or file.endswith(".png") or file.endswith(".jpg") or file.endswith(".avi") or file.endswith(".mp4") or file.endswith(".mp3"):
                 file_list.append(file)
 
         print (file_list)
