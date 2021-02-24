@@ -2,7 +2,7 @@ import socket
 import os
 import sys
 import time
-
+from os.path import exists
 from PIL import Image
 
 ##################################################
@@ -28,9 +28,9 @@ def list_f():
     file_list.append([file for file in file_list1 if file.endswith(".mp4")])
     file_list.append([file for file in file_list1 if file.endswith(".mp3")])
     return file_list
+    
 
 
-    print ('현제 디렉토리 파일: ',file_list)
 
 
 
@@ -41,16 +41,21 @@ def split():
         split_f = filename.split(' ')  
         
         if split_f[0] == 'push':
-            data = client.recv(1024)
-            print(data.decode())
-            file_push(split_f)
-            data = client.recv(1024)
-            print(data.decode())
+            if exists (split_f[1]):
+                file_push(split_f)
+                data = client.recv(1024)
+                print(data.decode())
+            else:
+                client.sendall(b'no_file')
+                print('파일이 존재하지 않습니다')   
             
         elif split_f[0] == 'pull':
-            data = client.recv(1024)
-            print(data.decode())
-            
+            if no_file():
+                return
+            if exists (split_f[1]):
+                print('이미 존재하는 파일 입니다')
+                client.sendall(b'exists_file')
+                return
         
             file_pull(split_f)
             
@@ -59,8 +64,20 @@ def split():
             
         
         else:
-            data = client.recv(1024)
-            print(data.decode())
+            if no_file():
+                return
+
+
+def no_file():
+    data = client.recv(1024)
+    data= data.decode()
+    if data == '이미 존재하는 파일입니다.' or data == 'Error 존재하지 않는 명령어 입니다' or data == 'Error 존재하지 않는 파일 입니다.':
+        print(data)
+        return True
+    else:
+        print(data)        
+    
+    
             
 # 파일 받기
                   
@@ -149,7 +166,7 @@ def file_push(split_f):
         send_vid(split_f)    
     
 def send(data,size=1024):
-        client.sendall(data,size)
+        client.sendall(data)
         return len(data)
 
 def send_vid(split_f):
@@ -193,7 +210,7 @@ def send_img(split_f):
                     size += send(data[i*1024:(i+1)*1024])
                     print('data N0.%s'%i)
                     print(size)
-            send('\0'.encode())
+            
             print('End')
             return size
         except Exception as e:
@@ -255,7 +272,7 @@ class login3():
                 
         self.client.sendall(input(dnf).encode())
         inf = self.client.recv(1024)
-        inf = dnf.decode()
+        inf = inf.decode()
         if inf == 'Password Confirm Failed' :
             print(inf) 
             return False
@@ -282,24 +299,29 @@ class login3():
 
 a = 0
 ## 가동 ##
-while 1 :
-    a += 1
+try:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((HOST, PORT))
-    if a == 1 :
-        re=login3(client)
-        print('서버와 연결되었습니다')
-        print('ᕙ༼◕ ᴥ ◕༽ᕗ')
-        while True:
-            if re.split2(input('로그이늘 할려면 y, 화원가입을 할려면 n 을 입력하세요:')):
-                break
-    data = client.recv(1024)
-    print('서버에 있는 파일',repr(data.decode()))
-    print('୧༼◕ ᴥ ◕༽୨')
-    list_f()
-    print('ᕙ༼◕ ᴥ ◕༽ᕗ')
-    print('서버에서 파일을 받고 싶으면 pull, 업로드 하고싶을면 push르 입력후 파일명을 입력하십시오')
-    print('୧༼◕ ᴥ ◕༽୨')
-    filename = input('명령어 파일명:')
-    client.sendall(filename.encode('utf-8'))
-    split()
+    while 1 :
+        a += 1
+        if a == 1 :
+            re=login3(client)
+            print('서버와 연결되었습니다')
+            print('ᕙ༼◕ ᴥ ◕༽ᕗ')
+            while True:
+                if re.split2(input('로그인을 할려면 y, 화원가입을 할려면 n 을 입력하세요:')):
+                    break
+               
+        data = client.recv(1024)
+        print('서버에 있는 파일',repr(data.decode()))
+        print('')
+        
+        print ('현제 디렉토리 파일: ',list_f())
+        print('')
+        print('서버에서 파일을 받고 싶으면 pull, 업로드 하고싶을면 push를 입력후 파일명을 입력하십시오')
+        print('')
+        filename = input('명령어 파일명:')
+        client.sendall(filename.encode('utf-8'))
+        split()
+except Exception as e:
+    print(e)
