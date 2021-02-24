@@ -7,7 +7,7 @@ class SendData:
         self.storage = storage
         
     def send(self,data,size=1024):
-        self.client.sendall(data,size)
+        self.client.sendall(data)
         return len(data)
 
     def send_vid(self,fn):
@@ -49,7 +49,7 @@ class SendData:
                     size += self.send(data[i*1024:(i+1)*1024])
                     print('data N0.%s'%i)
                     print(size)
-            self.send('\0'.encode())
+            
             print('End')
             return size
         except Exception as e:
