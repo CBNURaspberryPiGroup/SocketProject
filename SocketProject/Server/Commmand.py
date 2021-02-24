@@ -97,15 +97,13 @@ class Command():
         if fileExtension == '.txt':
             sed.send_txt(self.split_f[1])
             data = self.client.recv(1024)
-            for path in data.decode():
-                print(data)
+            print(data.decode())
         elif fileExtension == '.png'or'.jpg':
             sed.send_img(self.split_f[1])
             data = self.client.recv(1024)
-            for path in data.decode():
-                print(data)
+            print(data.decode())
+                
         elif fileExtension == '.avi'or'.mp4' or'.mp3':
             sed.send_vid(self.split_f[1])
             data=self.client.recv(1024)
-            for path in data.decode():
-                print(data) 
+            print(data.decode())
