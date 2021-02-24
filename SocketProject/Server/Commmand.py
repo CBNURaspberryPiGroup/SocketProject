@@ -28,27 +28,35 @@ class Command():
         
         if self.split_f[0] == 'push':
             if exists(self.split_f[1]):
-                err = ('Error -'+self.split_f[1]+'- 이미 존재하는 파일입니다.') 
-                self.client.sendall(err.encode('utf-8'))
+               
+                self.client.sendall('Error 이미 존재하는 파일입니다.'.encode('utf-8'))
                 
-                print(err)
-            else:    
-                self.file_push()
+                print('Error 이미 존재하는 파일입니다.')
+            else:
+                if self.client.recv(1024) ==  b'no_file':
+                    print('Error 클라이언트에 존재하지 않는 파일')
+                    pass
+                else:  
+                    self.file_push()
             
         elif self.split_f[0] == 'pull':
             if not exists(self.split_f[1]):
-                err = ('Error -'+self.split_f[1]+'- 존재하지 않는 파일 입니다.') 
-                self.client.sendall(err.encode('utf-8'))
                 
-                print(err)
-            else:    
-                self.file_pull()
+                self.client.sendall('Error 존재하지 않는 파일 입니다.'.encode('utf-8'))
+                
+                print('Error 존재하지 않는 파일 입니다.')
+            else:
+                if self.client.recv(1024) ==  b'exists_file':
+                    print('Error 클라이언트에 이미 존재하는 파일')
+                    pass    
+                else:
+                    self.file_pull()
         
         else:
-            err = ('Error -'+self.split_f[0]+'- 존재하지 않는 명령어 입니다')
-            print(err) 
+            
+            print('Error 존재하지 않는 명령어 입니다') 
             Log.log(0,"Invalid Command : %s"%filename)
-            self.client.sendall(err.encode('utf-8'))
+            self.client.sendall('Error 존재하지 않는 명령어 입니다'.encode('utf-8'))
     
     def split2(self):
         id=Identification.Identification(self.client)
