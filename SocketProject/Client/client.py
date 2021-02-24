@@ -7,7 +7,7 @@ from PIL import Image
 
 ##################################################
 #서버정보
-HOST = '203.227.140.199'  # The server's hostname or IP address
+HOST = '1.246.117.24'  # The server's hostname or IP address
 PORT = 9966        # The port used by the server
 
 #파일 보내거나 받을 주소
@@ -27,6 +27,7 @@ def list_f():
     file_list.append([file for file in file_list1 if file.endswith(".avi")])
     file_list.append([file for file in file_list1 if file.endswith(".mp4")])
     file_list.append([file for file in file_list1 if file.endswith(".mp3")])
+    return file_list
 
 
     print ('현제 디렉토리 파일: ',file_list)
@@ -43,12 +44,19 @@ def split():
             data = client.recv(1024)
             print(data.decode())
             file_push(split_f)
+            data = client.recv(1024)
+            print(data.decode())
             
         elif split_f[0] == 'pull':
             data = client.recv(1024)
             print(data.decode())
             
+        
             file_pull(split_f)
+            
+            file_list=str(list_f())
+            client.sendall(file_list.encode())
+            
         
         else:
             data = client.recv(1024)
@@ -61,15 +69,21 @@ def file_pull(split_f):
         
     if fileExtension == '.txt':
         try:
-            f=open("%s%s"%(storage,split_f[1]),'w')
+            f=open("%s%s"%(storage,split_f[1]),'w')          # 받을 텍스트 파일을 저장하기 위해 open사용
+            start=time.time()
+            size=0
             while True :
-                data=client.recv(1024)
-                if '\0' in data.decode():
-                    f.write(data.decode()[0:-1])
-                    print(split_f[1]+ '받기완료')
-                    break
+                data=client.recv(1024)               # send.py에서 보낼txt파일의 각 문장들을 readlines함수를 이용해 보내줌
+                size+=len(data)                           
+                print(data)
+                if '\0' in data.decode():                 # 텍스트 파일은 바이너리 파일이 아니기 때문에 텍스트 상에 null('\0'.decode())문자가 포함되지 않는다. 
+                    f.write(data.decode()[0:-1])          # 이를 이용하여 send.py에서는 텍스트파일의 각 문장들을 다보낸뒤 마침을 알리고자 null문자를 보내고
+                    break                                 # 수신측에서는 null문자가 오면 마지막 문장에서 null문자를  뺀뒤 저장한다.
                 else :
-                    f.write(data.decode()) 
+                    f.write(data.decode())               
+            print("수신한 데이터:"+str(size)+"byte")
+            print("소요시간:"+str(time.time()-start)+"초")
+            print('୧༼◕ ᴥ ◕༽୨')
                     
         except Exception as e:
             print(e)               
@@ -78,27 +92,33 @@ def file_pull(split_f):
     elif fileExtension == '.png'or '.jpg':
         try:
             
-            matadata=client.recv(1024)
-            matadata=matadata.decode()
-            matadata= matadata.split(":")
-            img_size= matadata[1].split(",")  
-            size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])])
-            img_mode=matadata[3]
-            img_data=b""
+            matadata=client.recv(1024)          # 메타데이터는 이미지의 모드(ex) rgb,rgba 등등)와 이미지의 사이즈(ex) 1024x1024 등등)의 정보를 나타낸다. send.py에서 각 정보를 추출하여 보내준다.
+            matadata=matadata.decode()               # 받은 메타데이터를 디코딩해준다.
+            matadata= matadata.split(":")            # 메타데이터는 "Size:%s:Mode:%s"%(data.size,data.mode)의 형식으로 오는데 이 값들(%s)을 추출하기 위해 스플릿한다.
+            img_size= matadata[1].split(",")         # matadata[1]="1231,1213"로 사이즈를 의미하는데 이를,로 스플릿 한다.         
+            size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])]) # 받을 각정보들을 frombytes함수를 이용하여 재합성 시킬 때 사이즈 인수는 튜플로 받기 때문에 옆과 같은 과정을 거친다.""
+            img_mode=matadata[3]                     # 이미지의 모드 정보를 의미한다. 
+            img_data=b""                             # 이미지를 send.py에서 tobytes함수로 이미지의 원시데이터를 추출하는데 이를 받기 위한 인수이다.
+            a=0
+            start=time.time()   
             while True:
                 try:
-                    dat=client.recv(1024)
+                    dat=client.recv(1024)       # frombytes함수는 이미지를 합성시킬 때 필요한 데이터가 충족되지 않으면 오류를 보내는데 try구문을 이용하여 이미지가 합성될 때까지 데이터를 계속받는다.
+                    a+=len(dat)
                     img_data+=dat
                     data=Image.frombytes(img_mode,size,img_data)
-                    result="ok"
                 except:
-                    result="fail"
-                if result=="ok":
-                    data.save("%s%s"%(storage,split_f[1]))
-                break    
+                    pass            
+                else:
+                    data.save("%s%s"%(storage,split_f[1]))    # 합성한 이미지를 저장한다.
+                    break
+            print("수신한 데이터:"+str(a)+"byte")
+            print("소요시간:"+str(time.time()-start)+"초")
+            print('୧༼◕ ᴥ ◕༽୨')   
 
         except Exception as e:
             print(e)
+            
     elif fileExtension == '.avi'or '.mp4' or '.mp3':
         try:
             vid=open(storage+'/'+split_f[1],"wb")
@@ -180,102 +200,85 @@ def send_img(split_f):
             print(e)
             send(repr(e).encode())                       
         
- 
-def reg() :
-    def condition (inf) :
-            while True :
-                inf = input(inf)
-                if " " in inf : print("공백은 사용할 수 없습니다.")
-                elif len(inf) >= 7 : print("ID는 7자 이하로 입력하세요")
-                elif len(inf) <= 2: print("ID는 3자 이상 입력하세요")                
-                else : break
+class login3():
+    def __init__(self,client):
+        self.client = client
+        
+        
+         
+    def login(self):   #로그인 버튼 누르면 시작되는것
+            self.client.sendall('y'.encode())
+            if self.process(input('ID:')):
+                if self.process(input('PW:')):
+                    return True
+            
+            
+    def reg(self):  #회원가입 버튼 누르면 시작되는것
+        self.client.sendall('n'.encode())  
+        if self.process(input('ID:')):
+            if self.process2(input('PW:')):
+                
+                return True
+                
+                   
     
-    def ID_process (inf) : # ID / log in + sign up for 
-        while True :
-            inf = client.recv(1024)
-            inf = inf.decode()
-            condition(inf)
-            client.sendall(inf.encode())
-            inf = client.recv(1024)
-            inf = inf.decode()
-            # inf = client.recv(1024)
-            # inf = inf.decode()
-            if inf == 'ID Already Exists' :
-                print(inf)
-            else : break
+    def process(self,inf):  #아이디 비번확인
+        
+        
+            
+        self.client.sendall(inf.encode())
+        
+        inf = self.client.recv(1024)
+        inf = inf.decode()
+        if inf == 'ID Not Found' or inf == 'Wrong Password' or inf == 'ID Already Exists': 
+            print(inf)
+            return False
+        else:
+            print(inf)
+            return True    
+        
+        
+               
+    
+    
+    
        
-     
-    def pw_process2 (inf) : # PW / log in + sign up for id
-        while True :
-            inf = client.recv(1024)
-            inf = inf.decode()
-            condition(inf)
-            client.sendall(inf.encode()) #PW send
-            inf = client.recv(1024)
-            inf = inf.decode()
-            condition(inf)
-            client.sendall(inf.encode()) # Pw confirm
-            inf = client.recv(1024)
-            inf = inf.decode()
-            if inf == 'Password Confirm Failed' : print(inf)
-            else : break
         
-    id = ""
-    pw = ""
-    ID_process(id)
-    pw_process2(pw)
-
-def login ():
-    def condition (inf) :
-            while True :
-                inf = input(inf)
-                if " " in inf : print("공백은 사용할 수 없습니다.")
-                elif len(inf) >= 7 : print("ID는 7자 이하로 입력하세요")
-                elif len(inf) <= 2: print("ID는 3자 이상 입력하세요")                
-                else : break
-    
-    def ID_process (inf) :
-        while True :
-            inf = client.recv(1024)
-            inf = inf.decode()
-            condition(inf)
-            client.sendall(inf.encode())
-            inf = client.recv(1024)
-            inf = inf.decode()
-            if inf == 'ID Not Found' : print(inf)
-            else : break
+    def process2(self,inf) : #아이디 비번 확인2
+            
+               
+                
+        self.client.sendall(inf.encode())
+        dnf = self.client.recv(1024)
+        dnf = dnf.decode()
         
-
-    def pw_process (inf) :
-        while True :
-            inf = client.recv(1024)
-            inf = inf.decode()
-            condition(inf)
-            client.sendall(inf.encode())
-            inf = client.recv(1024)
-            inf = inf.decode()
-            if inf == 'Wrong Password' : print(inf)
-            else : break
-        
-    id = ""
-    pw = ""
-    ID_process(id)
-    pw_process(pw)
+                
+        self.client.sendall(input(dnf).encode())
+        inf = self.client.recv(1024)
+        inf = dnf.decode()
+        if inf == 'Password Confirm Failed' :
+            print(inf) 
+            return False
+        else:
+            print(inf)
+            return True
+           
 
 
 
     
         
 
-def split2(se):
-    if se == 'y':
-        login()
-    if se == 'n':
-        reg()
-        time.sleep(1)
-        sys.exit()
-    else:
-        sys.exit()
+    def split2(self,se):
+        if se == 'y':
+            if self.login():
+                return True
+            
+        if se == 'n':
+            if self.reg():
+                return True
+            
+       
 
 a = 0
 ## 가동 ##
@@ -284,11 +287,12 @@ while 1 :
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((HOST, PORT))
     if a == 1 :
+        re=login3(client)
         print('서버와 연결되었습니다')
         print('ᕙ༼◕ ᴥ ◕༽ᕗ')
-        logein =input('로그인을할려면 y 회원가입을 할려면 n 을 입력하세요:')
-        client.sendall(logein.encode())
-        split2(logein)
+        while True:
+            if re.split2(input('로그이늘 할려면 y, 화원가입을 할려면 n 을 입력하세요:')):
+                break
     data = client.recv(1024)
     print('서버에 있는 파일',repr(data.decode()))
     print('୧༼◕ ᴥ ◕༽୨')
