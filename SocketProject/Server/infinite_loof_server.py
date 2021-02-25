@@ -36,7 +36,7 @@ def sever():
             wok=work.filelist(client,storage)
         
             wok.list_f()
-           
+            print('명령어 대기상태')
             Com.split()
            
     
