@@ -12,7 +12,7 @@ from PIL import Image
 import re
 import json
 import subprocess
-
+from os.path import exists
 
 
 
@@ -86,6 +86,8 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
         self.client.sendall('y'.encode())
         if self.process(self.main.ID):
             if self.process(self.main.PW):
+                self.n=('로그인 성공')
+                self.threadEvent.emit(self.n)
                 self.run2()
             
             
@@ -95,6 +97,8 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
             if self.process2(self.main.PW):
                 data= self.client.recv(1024)
                 self.n=(data.decode())
+                
+                self.threadEvent.emit(self.n)
                 self.run2()
                    
     
@@ -184,22 +188,47 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
     def split(self,filename):
             split_f = filename.split(' ')  
             if split_f[0] == 'push':
-                print(split_f[0])
-                data = self.client.recv(1024)  #문제발생
-                print(data.decode())
-                self.file_push(split_f)
+                
+                if exists (split_f[1]):
+                    self.file_push(split_f)
+                    data = self.client.recv(1024)
+                    self.n= data.decode()
+                    self.threadEvent.emit(self.n)
+                else:
+                    self.client.sendall(b'no_file')
+                    self.n=('파일이 존재하지 않습니다') 
+                    self.threadEvent.emit(self.n)
                 
                 
             elif split_f[0] == 'pull':
-                data = self.client.recv(1024)
-                print(data.decode())
-                
+                if self.no_file():
+                    return
+                if exists (split_f[1]):
+                    self.n=('이미 존재하는 파일 입니다')
+                    self.threadEvent.emit(self.n)
+                    self.client.sendall(b'exists_file')
+                    return
+                self.client.sendall(b'ok')
                 self.file_pull(split_f)
+                self.main.list_show()
+                pr= (split_f[1],'받기 완료')
+                self.client.sendall(str(pr).encode())
                 
             else:
-                data = self.client.recv(1024)
-                print(data.decode())
-                
+                if self.no_file():
+                    return
+    
+    def no_file(self):
+        data = self.client.recv(1024)
+        data= data.decode()
+        if data == 'Error 이미 존재하는 파일입니다.' or data == 'Error 존재하지 않는 명령어 입니다' or data == 'Error 존재하지 않는 파일 입니다.':
+            self.n= data
+            self.threadEvent.emit(self.n)
+            return True
+        else:
+            self.n= data
+            self.threadEvent.emit(self.n)
+                      
     # 파일 받기
                     
     def file_pull(self,split_f):
@@ -219,16 +248,19 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                         break
                     else :
                         f.write(data.decode())
-                print("수신한 데이터:"+str(size)+"byte")
-                print("소요시간:"+str(time.time()-start)+"초")
-                print('୧༼◕ ᴥ ◕༽୨')
-               
+                self.n =("수신한 데이터:"+str(size)+"byte")
+                self.threadEvent.emit(self.n)
+                
+                self.n =("소요시간:"+str(time.time()-start)+"초")
+                self.threadEvent.emit(self.n)
+                self.n =('୧༼◕ ᴥ ◕༽୨')
+                self.threadEvent.emit(self.n)
                        
             except Exception as e:
                 print(e)               
             
             
-        elif fileExtension == '.png'or '.jpg':
+        elif fileExtension == '.png'or fileExtension =='.jpg':
             try:
                 
                 matadata=self.client.recv(1024)
@@ -251,14 +283,43 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                     else:
                         data.save("%s%s"%(self.storage,split_f[1]))
                         break
-                print("수신한 데이터:"+str(a)+"byte")
-                print("소요시간:"+str(time.time()-start)+"초")
-                print('୧༼◕ ᴥ ◕༽୨')
+                self.n =("수신한 데이터:"+str(size)+"byte")
+                self.threadEvent.emit(self.n)
+                
+                self.n =("소요시간:"+str(time.time()-start)+"초")
+                self.threadEvent.emit(self.n)
+                self.n =('୧༼◕ ᴥ ◕༽୨')
+                self.threadEvent.emit(self.n)
                         
 
             except Exception as e:
                 print(e)
+            
+        elif fileExtension == '.avi'or fileExtension == '.mp4' or fileExtension =='.mp3':
+            try:
+                vid=open(self.storage+'/'+split_f[1],"wb")       # tip: 각종 압축파일들은 용량을 줄이기 위해 바이너리화시킨다!
+                a=0                                      # 수신한 데이터 크기를 표시하기 위한 변수a
+                start=time.time()                        # time.time()은 현재시간-1970년 1월 1일 0시 0분 0초(유닉스 타임 시작 시기)를 초단위로 표현한것
+
+                while True:                              #'\xeb\x81\x9d'는 "끝"을 유니코드로 변환한것 즉 send.py에서 "끝"이라는 문자열이 올때까지 데이터를 계속 받은 뒤 
+                    data=self.client.recv(1024)          # vid 파일에 받은 데이터(받을 파일을 구성하고 있는 문자열)를 작성시킨다. 받은 모든 데이터가 다 작성되면 그 파일이 정상적으로 실행된다.
+                    if data==b'\xeb\x81\x9d':
+                        break
+                    a+=len(data)                          # a라는 변수에 수신한 data들의 크기를 더해주면서 최종 데이터의 크기를 함축한다.
+                    vid.write(data)
+                self.n =("수신한 데이터:"+str(size)+"byte")
+                self.threadEvent.emit(self.n)
                 
+                self.n =("소요시간:"+str(time.time()-start)+"초")
+                self.threadEvent.emit(self.n)
+                self.n =('୧༼◕ ᴥ ◕༽୨')
+                self.threadEvent.emit(self.n)
+                
+                
+            except Exception as e:
+                print(e)    
+                
+                       
     # 파일 보내기
                 
     def file_push(self,split_f):
@@ -266,8 +327,11 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
         if fileExtension == '.txt':
             self.send_txt(split_f)
             
-        elif fileExtension == '.png'or '.jpg':
+        elif fileExtension == '.png'or fileExtension == '.jpg':
             self.send_img(split_f)    
+        
+        elif fileExtension == '.avi'or fileExtension == '.mp4' or fileExtension =='.mp3':
+            self.send_vid(split_f)
         
     def send(self,data,size=1024):
             self.client.sendall(data)
@@ -283,6 +347,9 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                     size += self.send(dat.encode())
                 self.send('\0'.encode())
                 return size
+                
+                self.n =('୧༼◕ ᴥ ◕༽୨')
+                self.threadEvent.emit(self.n)
             except Exception as e:
                 print(e)
                 self.send(repr(e).encode())
@@ -290,6 +357,9 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
     def send_img(self,split_f):
             try:
                 data = Image.open(self.storage+"/"+split_f[1])
+                if '.jpg' in split_f[1][-4:] : modeConv = 'RGB'
+                elif '.png' in split_f[1][-4:] : modeConv = 'RGBA'
+                data = data.convert(mode=modeConv)
                 metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
                 data = data.tobytes()
                 self.send(metadata.encode())
@@ -303,14 +373,20 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                         size += self.send(data[i*1024:(i+1)*1024])
                         print('data N0.%s'%i)
                         print(size)
-                self.send('\0'.encode())
+                
                 print('End')
                 return size
             except Exception as e:
                 print(e)
-                self.send(repr(e).encode())        
-              
+                self.send(repr(e).encode())
+    
+    def send_vid(self,split_f):
+        vid=open(self.storage+"/"+split_f[1],"wb")
+        for lines in vid.readlines():
+            self.send(lines)
+        self.send('끝'.encode('utf-8')) 
         
+            
 ################### GUI부분 ###############################################3       
             
 class MainDialog(QDialog):
@@ -513,7 +589,7 @@ class MainDialog(QDialog):
             self.listn.clear()
             file_list1 = os.listdir(self.Storage)
             for file in file_list1: 
-                if file.endswith(".txt") or file.endswith(".png") or file.endswith(".jpg"):
+                if file.endswith(".txt") or file.endswith(".png") or file.endswith(".jpg") or file.endswith(".mp3") or file.endswith(".mp4") or file.endswith(".avi"):
                     self.listn.addItem(file)
             return False 
         except Exception as e:
