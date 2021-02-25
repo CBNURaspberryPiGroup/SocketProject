@@ -50,13 +50,17 @@ def split():
                 print('파일이 존재하지 않습니다')   
             
         elif split_f[0] == 'pull':
+           
             if no_file():
+                
                 return
             if exists (split_f[1]):
+               
                 print('이미 존재하는 파일 입니다')
                 client.sendall(b'exists_file')
                 return
-        
+            client.sendall(b'ok')
+            
             file_pull(split_f)
             
             file_list=str(list_f())
@@ -106,7 +110,7 @@ def file_pull(split_f):
             print(e)               
         
         
-    elif fileExtension == '.png'or '.jpg':
+    elif fileExtension == '.png'or fileExtension =='.jpg':
         try:
             
             matadata=client.recv(1024)          # 메타데이터는 이미지의 모드(ex) rgb,rgba 등등)와 이미지의 사이즈(ex) 1024x1024 등등)의 정보를 나타낸다. send.py에서 각 정보를 추출하여 보내준다.
@@ -136,7 +140,7 @@ def file_pull(split_f):
         except Exception as e:
             print(e)
             
-    elif fileExtension == '.avi'or '.mp4' or '.mp3':
+    elif fileExtension == '.avi'or fileExtension == '.mp4' or fileExtension == '.mp3':
         try:
             vid=open(storage+'/'+split_f[1],"wb")
             a=0
@@ -160,9 +164,9 @@ def file_push(split_f):
     if fileExtension == '.txt':
         send_txt(split_f)
         
-    elif fileExtension == '.png'or '.jpg':
+    elif fileExtension == '.png'or fileExtension == '.jpg':
         send_img(split_f)
-    elif fileExtension == '.avi'or '.mp4'or'.mp3':
+    elif fileExtension == '.avi'or fileExtension == '.mp4'or fileExtension == '.mp3':
         send_vid(split_f)    
     
 def send(data,size=1024):
