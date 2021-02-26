@@ -20,6 +20,7 @@
     * 2021.02.21: client.py 최신 업데이트 
                 * infinite_loof_sever.py 무한으로 안돌던 오류수정
                 * commmand.py , send.py 변경된 서버에 맞게 구문수정
+    * 2021.02.26: Clientgui_Manual 추가 
   * 이정호
     * 2021.01.25: Send.py 추가
     * 2021.01.25: 폴더 정리
