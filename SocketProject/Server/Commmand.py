@@ -21,8 +21,7 @@ class Command():
         
     def split(self):
         filename = self.client.recv(1024)
-        print(filename)
-        filename = filename.decode().replace("\0","")
+        filename = filename.decode()
         print(filename)
         self.split_f = filename.split(' ')  
         
@@ -51,7 +50,7 @@ class Command():
                 self.client.sendall('ok'.encode('utf-8'))
                 if self.client.recv(1024) ==  b'exists_file':
                     print('Error 클라이언트에 이미 존재하는 파일')
-                    pass    
+                    return
                 else:
                     
                     self.file_pull()
@@ -102,9 +101,6 @@ class Command():
               
     def file_pull(self):
         filename, fileExtension = os.path.splitext(self.split_f[1])
-        err = (self.split_f[1] + '파일 받기 시작')
-        print(err) 
-        self.client.sendall(err.encode('utf-8'))
         sed=Send.SendData(self.client,self.storage)
         if fileExtension == '.txt':
             sed.send_txt(self.split_f[1])
