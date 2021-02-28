@@ -1,5 +1,6 @@
 import socket
-from PIL import Image 
+from PIL import Image
+import time 
 
 class SendData:
     def __init__(self,client,storage):
@@ -12,11 +13,11 @@ class SendData:
 
     def send_vid(self,fn):
         vid=open(self.storage+"/"+fn,"rb")
-        a=vid.readlines()
-        print(a)
         for lines in vid.readlines():
-            self.send(lines)    
+            self.send(lines)
+        time.sleep(1)        
         self.send('끝'.encode('utf-8')) 
+        print('끝'.encode('utf-8'))
     
     def send_txt(self,fn):
         try: 
@@ -54,3 +55,4 @@ class SendData:
         except Exception as e:
             print(e)
             self.send(repr(e).encode())
+
