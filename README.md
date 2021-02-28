@@ -45,6 +45,8 @@
     * 2021.02.23: recv.py와 send.py에 바이너리파일(mp3,mp4,avi) 송수신 가능 추가
       work.py,commmand.py,client.py에서 바이너리파일 인식하게 수정(클라이언트 gui 버전 수정해야합니다)
       recv.py 주석 추가
+    * 2021.02.28  commmand.py, send.py recv.py 변경된 클라이언트에 맞게 수정 
+   
       
 ### 진행상황
   * 2021.02.18: 
