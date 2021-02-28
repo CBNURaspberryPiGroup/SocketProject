@@ -72,7 +72,7 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                 self.main.listw.addItem(k[1:-1])
             else : 
                 self.main.listw.addItem(k[2:-1])
-        
+        print('명령어 대기중')    
     
         
         
@@ -161,7 +161,7 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                 self.main.listw.addItem(k[1:-1])
             else : 
                 self.main.listw.addItem(k[2:-1])
-        
+        print('명령어 대기중')
         
     def sever_pull(self):  #파일받기 누르면 시작
         filename =('pull '+self.main.fn)
@@ -170,7 +170,7 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
         self.split(filename)
         self.main.listn.clear()
         self.main.list_show()
-        
+        print('명령어 대기중')
         
         
         
@@ -225,9 +225,8 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
             self.n= data
             self.threadEvent.emit(self.n)
             return True
-        else:
-            self.n= data
-            self.threadEvent.emit(self.n)
+      
+            
                       
     # 파일 받기
                     
@@ -307,7 +306,7 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                         break
                     a+=len(data)                          # a라는 변수에 수신한 data들의 크기를 더해주면서 최종 데이터의 크기를 함축한다.
                     vid.write(data)
-                self.n =("수신한 데이터:"+str(size)+"byte")
+                self.n =("수신한 데이터:"+str(a)+"byte")
                 self.threadEvent.emit(self.n)
                 
                 self.n =("소요시간:"+str(time.time()-start)+"초")
