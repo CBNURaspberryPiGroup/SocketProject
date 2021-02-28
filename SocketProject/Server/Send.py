@@ -11,9 +11,11 @@ class SendData:
         return len(data)
 
     def send_vid(self,fn):
-        vid=open(self.storage+"/"+fn,"wb")
+        vid=open(self.storage+"/"+fn,"rb")
+        a=vid.readlines()
+        print(a)
         for lines in vid.readlines():
-            self.send(lines)
+            self.send(lines)    
         self.send('끝'.encode('utf-8')) 
     
     def send_txt(self,fn):
@@ -33,9 +35,6 @@ class SendData:
     def send_img(self,fn):
         try:
             data = Image.open(self.storage+"/"+fn)
-            if '.jpg' in fn[-4:] : modeConv = 'RGB'
-            elif '.png' in fn[-4:] : modeConv = 'RGBA'
-            data = data.convert(mode=modeConv)
             metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
             data = data.tobytes()
             self.send(metadata.encode())
