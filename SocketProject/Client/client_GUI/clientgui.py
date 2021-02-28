@@ -146,7 +146,7 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
      
     def sever_push(self):  #파일 업로드 누르면 시작
         filename =('push '+self.main.fn)
-        self.client.sendall(filename.encode('utf-8')) 
+        
         
         self.split(filename)
         
@@ -165,8 +165,8 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
         
     def sever_pull(self):  #파일받기 누르면 시작
         filename =('pull '+self.main.fn)
-        self.client.sendall(filename.encode('utf-8'))
         
+        self.client.sendall(filename.encode('utf-8'))
         self.split(filename)
         self.main.listn.clear()
         self.main.list_show()
@@ -189,7 +189,15 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
             split_f = filename.split(' ')  
             if split_f[0] == 'push':
                 
+                
                 if exists (split_f[1]):
+                    self.client.sendall(filename.encode('utf-8'))
+                    de = self.client.recv(1024)
+                    if de.decode() == 'not ok':
+                        self.n=('파일이 이미 존재합니다') 
+                        self.threadEvent.emit(self.n)
+                        return
+                    
                     self.file_push(split_f)
                     data = self.client.recv(1024)
                     self.n= data.decode()
@@ -299,13 +307,15 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                 vid=open(self.storage+'/'+split_f[1],"wb")       # tip: 각종 압축파일들은 용량을 줄이기 위해 바이너리화시킨다!
                 a=0                                      # 수신한 데이터 크기를 표시하기 위한 변수a
                 start=time.time()                        # time.time()은 현재시간-1970년 1월 1일 0시 0분 0초(유닉스 타임 시작 시기)를 초단위로 표현한것
-
-                while True:                              #'\xeb\x81\x9d'는 "끝"을 유니코드로 변환한것 즉 send.py에서 "끝"이라는 문자열이 올때까지 데이터를 계속 받은 뒤 
-                    data=self.client.recv(1024)          # vid 파일에 받은 데이터(받을 파일을 구성하고 있는 문자열)를 작성시킨다. 받은 모든 데이터가 다 작성되면 그 파일이 정상적으로 실행된다.
-                    if data==b'\xeb\x81\x9d':
+               
+                while True:                              
+                    data=self.client.recv(1024)          
+                    if data == b'\xeb\x81\x9d':
                         break
+                                                    
                     a+=len(data)                          # a라는 변수에 수신한 data들의 크기를 더해주면서 최종 데이터의 크기를 함축한다.
                     vid.write(data)
+                    
                 self.n =("수신한 데이터:"+str(a)+"byte")
                 self.threadEvent.emit(self.n)
                 
@@ -356,9 +366,9 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
     def send_img(self,split_f):
             try:
                 data = Image.open(self.storage+"/"+split_f[1])
-                if '.jpg' in split_f[1][-4:] : modeConv = 'RGB'
-                elif '.png' in split_f[1][-4:] : modeConv = 'RGBA'
-                data = data.convert(mode=modeConv)
+                # if '.jpg' in split_f[1][-4:] : modeConv = 'RGB'
+                # elif '.png' in split_f[1][-4:] : modeConv = 'RGBA'
+                # data = data.convert(mode=modeConv)
                 metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
                 data = data.tobytes()
                 self.send(metadata.encode())
@@ -380,7 +390,7 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
                 self.send(repr(e).encode())
     
     def send_vid(self,split_f):
-        vid=open(self.storage+"/"+split_f[1],"wb")
+        vid=open(self.storage+"/"+split_f[1],"rb")
         for lines in vid.readlines():
             self.send(lines)
         self.send('끝'.encode('utf-8')) 
