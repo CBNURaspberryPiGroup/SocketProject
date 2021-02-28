@@ -1,54 +1,121 @@
-import socket
-import Commmand
-import work
-import Send
-import Logging as Log
+from socket import *
+import os
 from os.path import exists
-import time
+import sys
+import Send
+import Recv
+import Identification
+import Logging as Log
 
 
-Host = '1.246.117.24'
-Port = 9966
 
-storage = "./"
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-if not exists("log.log") :
-    Log.startlog()
-
-server_socket.bind((Host,Port))
-def sever():
-        print("listening...")
-        server_socket.listen()
-        print("listened")
-        client, addr = server_socket.accept()
-        print('Connected by '+str(addr))
-        Log.log(1,"Connected by "+str(addr))
-        a = 0
-        while True :
-            a += 1
-            Com = Commmand.Command(client,storage)
-            if a == 1 : 
-                Com.split2()
-            wok=work.filelist(client,storage)
+class Command():
+    
+    def __init__(self,client,storage):
         
-            wok.list_f()
-            print('명령어 대기상태')
-            Com.split()
+        self.storage = storage
+        self.client = client
+       
+        
+        
+    def split(self):
+        filename = self.client.recv(1024)
+        print(filename)
+        filename = filename.decode().replace("\0","")
+        print(filename)
+        self.split_f = filename.split(' ')  
+        
+        if self.split_f[0] == 'push':
             
-           
+            if exists(self.split_f[1]):
+               
+                self.client.sendall('Error 이미 존재하는 파일입니다.'.encode('utf-8'))
+                
+                print('Error 이미 존재하는 파일입니다.')
+            else:
+                if self.client.recv(1024) ==  b'no_file':
+                    print('Error 클라이언트에 존재하지 않는 파일')
+                    pass
+                else:  
+                    self.file_push()
+            
+        elif self.split_f[0] == 'pull':
+            
+            if not exists(self.split_f[1]):
+                
+                self.client.sendall('Error 존재하지 않는 파일 입니다.'.encode('utf-8'))
+                
+                print('Error 존재하지 않는 파일 입니다.')
+            else:
+                self.client.sendall('ok'.encode('utf-8'))
+                if self.client.recv(1024) ==  b'exists_file':
+                    print('Error 클라이언트에 이미 존재하는 파일')
+                    pass    
+                else:
+                    
+                    self.file_pull()
+        
+        else:
+            
+            print('Error 존재하지 않는 명령어 입니다') 
+            Log.log(0,"Invalid Command : %s"%filename)
+            self.client.sendall('Error 존재하지 않는 명령어 입니다'.encode('utf-8'))
     
-while True:            
-    try:
-        sever()
-        
-        
-    except Exception as e:
-        
-        print(e)
-        pass
+    def split2(self):
+        id=Identification.Identification(self.client)
+        while True:
+            logein = self.client.recv(1024)
+            logein = logein.decode()
+            
+
+
+            if logein == 'y':
+                print('y')
+                if id.Authentification():
+                    break
+
+            if logein == 'n':
+                print('n')
+                if id.Register():
+                    break
+            
+            
+            
         
     
+    
+                  
+    def file_push(self):
+        filename, fileExtension = os.path.splitext(self.split_f[1])
+        err = (self.split_f[1] + '파일 업로드 시작')
+        print(err) 
+        self.client.sendall(err.encode('utf-8'))
+        Rec=Recv.RecvData(self.client,self.storage)
+        if fileExtension == '.txt':
+            Rec.recv_txt(self.split_f[1])
+        elif fileExtension == '.png'or fileExtension =='.jpg':
+            Rec.recv_img(self.split_f[1])
+        elif fileExtension == '.avi'or fileExtension =='.mp4' or fileExtension =='.mp3':
+            Rec.recv_vid(self.split_f[1])  
+        
+              
+    def file_pull(self):
+        filename, fileExtension = os.path.splitext(self.split_f[1])
+        err = (self.split_f[1] + '파일 받기 시작')
+        print(err) 
+        self.client.sendall(err.encode('utf-8'))
+        sed=Send.SendData(self.client,self.storage)
+        if fileExtension == '.txt':
+            sed.send_txt(self.split_f[1])
+            data = self.client.recv(1024)
+            print(data.decode())
+        elif fileExtension == '.png'or fileExtension =='.jpg':
+            sed.send_img(self.split_f[1])
+            data = self.client.recv(1024)
+            print(data.decode())
+                
+        elif fileExtension == '.avi'or fileExtension =='.mp4' or fileExtension =='.mp3':
+            sed.send_vid(self.split_f[1])
+            data=self.client.recv(1024)
+            print(data.decode())
