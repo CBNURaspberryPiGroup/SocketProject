@@ -393,6 +393,7 @@ class sever_start(QThread): #돌아가는 서버ㄴㄹㄷ
         vid=open(self.storage+"/"+split_f[1],"rb")
         for lines in vid.readlines():
             self.send(lines)
+        time.sleep(1)    
         self.send('끝'.encode('utf-8')) 
         
             
