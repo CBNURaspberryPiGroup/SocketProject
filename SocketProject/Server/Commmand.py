@@ -24,20 +24,18 @@ class Command():
         filename = filename.decode()
         print(filename)
         self.split_f = filename.split(' ')  
-        
-        if self.split_f[0] == 'push':
+
+        if self.split_f[0] == 'push':          
             
             if exists(self.split_f[1]):
                
-                self.client.sendall('Error 이미 존재하는 파일입니다.'.encode('utf-8'))
+                self.client.sendall('not ok'.encode('utf-8'))
                 
                 print('Error 이미 존재하는 파일입니다.')
             else:
-                if self.client.recv(1024) ==  b'no_file':
-                    print('Error 클라이언트에 존재하지 않는 파일')
-                    pass
-                else:  
-                    self.file_push()
+                self.client.sendall('ok'.encode('utf-8'))
+                print('파일 수신 시작')
+                self.file_push()    
             
         elif self.split_f[0] == 'pull':
             
@@ -86,10 +84,11 @@ class Command():
     
                   
     def file_push(self):
+        
         filename, fileExtension = os.path.splitext(self.split_f[1])
-        err = (self.split_f[1] + '파일 업로드 시작')
-        print(err) 
-        self.client.sendall(err.encode('utf-8'))
+        #err = (self.split_f[1] + '파일 업로드 시작')
+        #print(err) 
+        #self.client.sendall(err.encode('utf-8'))
         Rec=Recv.RecvData(self.client,self.storage)
         if fileExtension == '.txt':
             Rec.recv_txt(self.split_f[1])
