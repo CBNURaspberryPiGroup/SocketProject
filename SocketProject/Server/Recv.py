@@ -16,10 +16,11 @@ class RecvData:                                  # 통신을 할 때는 통일�
 
         while True:                              #'\xeb\x81\x9d'는 "끝"을 유니코드로 변환한것 즉 send.py에서 "끝"이라는 문자열이 올때까지 데이터를 계속 받은 뒤 
             data=self.client.recv(1024)          # vid 파일에 받은 데이터(받을 파일을 구성하고 있는 문자열)를 작성시킨다. 받은 모든 데이터가 다 작성되면 그 파일이 정상적으로 실행된다.
-            if data==b'\xeb\x81\x9d':
+            if data == b'\xeb\x81\x9d':
                 break
-            a+=len(data)                          # a라는 변수에 수신한 data들의 크기를 더해주면서 최종 데이터의 크기를 함축한다.
+            a+=len(data)                                 # a라는 변수에 수신한 data들의 크기를 더해주면서 최종 데이터의 크기를 함축한다.
             vid.write(data)
+
         print("수신한 데이터:"+str(a)+"byte")     # 수신한 데이터 표시 
         print("소요시간:"+str(time.time()-start)+"초")  # 현재시간에 시작시간을 빼서 소요시간 표시
         print('୧༼◕ ᴥ ◕༽୨')
