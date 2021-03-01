@@ -3,7 +3,6 @@ import os
 import sys
 import time
 from os.path import exists
-from PIL import Image
 
 ##################################################
 #서버정보
@@ -110,37 +109,9 @@ def file_pull(split_f):
             print(e)               
         
         
-    elif fileExtension == '.png'or fileExtension =='.jpg':
-        try:
-            
-            matadata=client.recv(1024)          # 메타데이터는 이미지의 모드(ex) rgb,rgba 등등)와 이미지의 사이즈(ex) 1024x1024 등등)의 정보를 나타낸다. send.py에서 각 정보를 추출하여 보내준다.
-            matadata=matadata.decode()               # 받은 메타데이터를 디코딩해준다.
-            matadata= matadata.split(":")            # 메타데이터는 "Size:%s:Mode:%s"%(data.size,data.mode)의 형식으로 오는데 이 값들(%s)을 추출하기 위해 스플릿한다.
-            img_size= matadata[1].split(",")         # matadata[1]="1231,1213"로 사이즈를 의미하는데 이를,로 스플릿 한다.         
-            size=tuple([int(img_size[0][1:]),int(img_size[1][1:-1])]) # 받을 각정보들을 frombytes함수를 이용하여 재합성 시킬 때 사이즈 인수는 튜플로 받기 때문에 옆과 같은 과정을 거친다.""
-            img_mode=matadata[3]                     # 이미지의 모드 정보를 의미한다. 
-            img_data=b""                             # 이미지를 send.py에서 tobytes함수로 이미지의 원시데이터를 추출하는데 이를 받기 위한 인수이다.
-            a=0
-            start=time.time()   
-            while True:
-                try:
-                    dat=client.recv(1024)       # frombytes함수는 이미지를 합성시킬 때 필요한 데이터가 충족되지 않으면 오류를 보내는데 try구문을 이용하여 이미지가 합성될 때까지 데이터를 계속받는다.
-                    a+=len(dat)
-                    img_data+=dat
-                    data=Image.frombytes(img_mode,size,img_data)
-                except:
-                    pass            
-                else:
-                    data.save("%s%s"%(storage,split_f[1]))    # 합성한 이미지를 저장한다.
-                    break
-            print("수신한 데이터:"+str(a)+"byte")
-            print("소요시간:"+str(time.time()-start)+"초")
-            print('୧༼◕ ᴥ ◕༽୨')   
 
-        except Exception as e:
-            print(e)
             
-    elif fileExtension == '.avi'or fileExtension == '.mp4' or fileExtension == '.mp3':
+    elif fileExtension == '.avi'or fileExtension == '.mp4' or fileExtension == '.mp3' or  '.png'or fileExtension =='.jpg':
         try:
             vid=open(storage+'/'+split_f[1],"wb")
             a=0
@@ -164,9 +135,7 @@ def file_push(split_f):
     if fileExtension == '.txt':
         send_txt(split_f)
         
-    elif fileExtension == '.png'or fileExtension == '.jpg':
-        send_img(split_f)
-    elif fileExtension == '.avi'or fileExtension == '.mp4'or fileExtension == '.mp3':
+    elif fileExtension == '.avi'or fileExtension == '.mp4'or fileExtension == '.mp3' or fileExtension == '.png'or fileExtension == '.jpg':
         send_vid(split_f)    
     
 def send(data,size=1024):
@@ -198,7 +167,7 @@ def send_txt(split_f):
             print(e)
             send(repr(e).encode())
             
-def send_img(split_f):
+'''def send_img(split_f):
         try:
             data = Image.open(storage+"/"+split_f[1])
             metadata = "Size:%s:Mode:%s"%(data.size,data.mode)
@@ -219,7 +188,7 @@ def send_img(split_f):
             return size
         except Exception as e:
             print(e)
-            send(repr(e).encode())                       
+            send(repr(e).encode())'''                       
         
 class login3():
     def __init__(self,client):
