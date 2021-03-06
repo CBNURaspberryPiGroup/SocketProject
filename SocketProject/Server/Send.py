@@ -1,5 +1,5 @@
 import socket
-#from PIL import Image
+from PIL import Image
 import time 
 
 class SendData:
@@ -33,7 +33,7 @@ class SendData:
             print(e)
             self.send(repr(e).encode())
 
-    '''def send_img(self,fn):
+    def send_img(self,fn):
         try:
             data = Image.open(self.storage+"/"+fn)
             # if '.jpg' in split_f[1][-4:] : modeConv = 'RGB'
@@ -57,5 +57,5 @@ class SendData:
             return size
         except Exception as e:
             print(e)
-            self.send(repr(e).encode())'''
+            self.send(repr(e).encode())
 
