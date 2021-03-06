@@ -1,5 +1,5 @@
 import socket
-#from PIL import Image
+from PIL import Image
 import time 
 import os
 import work
@@ -27,7 +27,7 @@ class RecvData:                                  # 통신을 할 때는 통일�
         wok=work.filelist(self.client,self.storage)    
         wok.list_f()    
                  
-    '''def recv_img(self,fn):
+    def recv_img(self,fn):
         matadata=self.client.recv(1024)          # 메타데이터는 이미지의 모드(ex) rgb,rgba 등등)와 이미지의 사이즈(ex) 1024x1024 등등)의 정보를 나타낸다. send.py에서 각 정보를 추출하여 보내준다.
         matadata=matadata.decode()               # 받은 메타데이터를 디코딩해준다.
         matadata= matadata.split(":")            # 메타데이터는 "Size:%s:Mode:%s"%(data.size,data.mode)의 형식으로 오는데 이 값들(%s)을 추출하기 위해 스플릿한다.
@@ -52,7 +52,7 @@ class RecvData:                                  # 통신을 할 때는 통일�
         print("소요시간:"+str(time.time()-start)+"초")
         print('୧༼◕ ᴥ ◕༽୨')
         wok=work.filelist(self.client,self.storage)    # work함수에서 현 디렉토리내의 파일들을 서버측에 보내준다.
-        wok.list_f()'''
+        wok.list_f()
 
     
     def recv_txt(self,fn):
